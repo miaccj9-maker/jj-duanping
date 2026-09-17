@@ -338,7 +338,7 @@ const NIGHT_CSS = `
   box-shadow: 0 6px 28px rgba(0, 0, 0, 0.55) !important;
 }
 /* 小票“小狗日记”标题（模板用 transparent 隐藏文字，夜间恢复为亮色显示） */
-.dp-card-wrap .be-card.be-custom .be-watermark { color: rgba(255, 255, 255, 0.9) !important; }
+.dp-card-wrap .be-card.be-custom .be-watermark { color: #ffffff !important; background: #1a1a1a !important; border-bottom-color: #333 !important; }
 /* 标题本体在 ::before 里且模板写死三重黑（color/stroke/shadow），夜间全部转亮 */
 /* 注意：html2canvas 1.4.1 对「白字 + -webkit-text-stroke 1px 深色」存在渲染 bug（文字整块消失），
    夜间必须把描边归零，纯白字才能稳定画出 */
@@ -349,7 +349,7 @@ const NIGHT_CSS = `
   -webkit-text-stroke-width: 0 !important;
   text-shadow: none !important;
 }
-.dp-card-wrap .be-card.be-custom .be-watermark::after { color: #d8d8de !important; }
+.dp-card-wrap .be-card.be-custom .be-watermark::after { color: #ffffff !important; }
 /* 真实 span 版标题（html2canvas 可靠渲染）：夜间转白（提级双保险，覆盖任何来源的黑字规则） */
 html .dp-card-wrap .be-card.be-custom .be-watermark .be-wm-title,
 .dp-card-wrap .be-card.be-custom .be-watermark .be-wm-title {
@@ -1137,7 +1137,7 @@ function buildCardHtml({
     beName = '',
 }) {
     const avatarBlock = avatarUrl
-        ? `<div class="be-char-avatar" style="background-image:url('${esc(avatarUrl)}')"></div>`
+        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;display:block">`
         : `<div class="be-char-avatar"></div>`;
     return `
     <div class="be-card be-custom" style="--be-quote-size:${quoteSize}px;--be-quote-lh:${quoteLh};--be-quote-ls:${quoteLs}em">
