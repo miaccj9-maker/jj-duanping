@@ -947,15 +947,20 @@
         max-width: 100%;
     }
     .dp-preview-head {
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
     }
     .dp-preview-tools {
         flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 8px;
+        justify-content: flex-start;
+        gap: 6px;
+        width: 100%;
     }
     #dp-width-slider {
-        width: 88px;
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 80px;
     }
     .dp-width-val {
         min-width: 52px;
@@ -1233,3 +1238,27 @@
 .dp-char-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;max-width:100%;}
 .dp-char-item{max-width:100%;overflow:hidden;text-overflow:ellipsis;}
 .dp-char-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+
+    /* 手机端：强制重置 range 滑块外观，消除浏览器默认图标 */
+    input[type="range"] {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        background: transparent;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #333;
+        cursor: pointer;
+        margin-top: -6px;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+        height: 4px;
+        background: #ddd;
+        border-radius: 2px;
+    }
+    /* 隐藏任何意外显示的 file input 默认按钮 */
+    input[type="file"] { display: none !important; }
