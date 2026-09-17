@@ -3398,9 +3398,15 @@ function injectShell() {
       var s = mosaicSize;
       brushCtx.save();
       brushCtx.globalCompositeOperation = "source-over";
-      if (mosaicSrcReady && mosaicSrcCv) {
-        // 真马赛克：从截图采样缩小再放大
-        var ps = Math.max(3, Math.floor(s/4));
+      if (mosaicStyle === "blur") {
+        brushCtx.fillStyle = "rgba(120,120,120,0.5)";
+        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
+      } else if (mosaicStyle === "solid") {
+        brushCtx.fillStyle = "#888";
+        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
+      } else if (mosaicSrcReady && mosaicSrcCv) {
+        // blocks/pixel：从截图采样像素化
+        var ps = mosaicStyle === "pixel" ? Math.max(3, Math.floor(s/4)) : Math.max(4, Math.floor(s/2));
         var sx = Math.floor(cx - s/2), sy = Math.floor(cy - s/2);
         brushCtx.imageSmoothingEnabled = false;
         for (var dy=0; dy<s; dy+=ps) {
@@ -3410,7 +3416,6 @@ function injectShell() {
           }
         }
       } else {
-        // 兜底灰色
         brushCtx.fillStyle = "#999";
         brushCtx.fillRect(cx-s/2, cy-s/2, s, s);
       }
