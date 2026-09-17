@@ -3326,7 +3326,12 @@ function injectShell() {
       brushOn=on;
       if(brushBar) brushBar.style.display=on?'block':'none';
       if(brushBtn){ brushBtn.style.background=on?'#1a1a1a':''; brushBtn.style.color=on?'#fff':''; }
-      if(on) setupBrushCanvas();
+      if(on){
+        if(mosaicOn){ mosaicOn=false; if(mosaicBar)mosaicBar.style.display="none"; if(mosaicBtn){mosaicBtn.style.background="";mosaicBtn.style.color="";} hideMagnifier(); }
+        var selT=document.querySelector(".dp-brush-t.active");
+        brushState.type = selT ? selT.dataset.t : "pen";
+        setupBrushCanvas();
+      }
     }
     if(brushBtn) brushBtn.addEventListener('click',function(){ toggleBrush(!brushOn); });
     if(brushBar){
@@ -3403,6 +3408,8 @@ function injectShell() {
       if (mosaicBar) mosaicBar.style.display = on ? 'block' : 'none';
       if (mosaicBtn) { mosaicBtn.style.background = on ? '#1a1a1a' : ''; mosaicBtn.style.color = on ? '#fff' : ''; }
       if (on) {
+        // 互斥：开马赛克时关画笔
+        if(brushOn){ brushOn=false; if(brushBar)brushBar.style.display='none'; if(brushBtn){brushBtn.style.background='';brushBtn.style.color='';} }
         setupMagnifier();
         setupBrushCanvas();
         brushState.type = 'mosaic';
