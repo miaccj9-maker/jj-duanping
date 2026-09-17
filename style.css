@@ -940,8 +940,8 @@
         flex-direction: row;
     }
     .dp-frame-box {
-        padding: 10px;
-        overflow-x: hidden;
+        padding: 0;
+        overflow: visible;
     }
     #dp-frame {
         max-width: 100%;
@@ -1278,6 +1278,33 @@
 }
 /* 卡片预览容器：不要棋盘格底图，直接白 */
 .dp-frame-box {
-    background: #ffffff !important;
-    border-radius: 14px;
+    background: repeating-conic-gradient(#f3f3f3 0% 25%, #ececec 0% 50%) 0 0 / 18px 18px;
+    border-radius: 0;
+}
+
+/* 全局：卡片直角，禁止裁剪 */
+.dp-frame-box,
+.dp-frame-box * {
+    border-radius: 0 !important;
+}
+.dp-frame-box {
+    overflow: visible !important;
+    padding: 0 !important;
+}
+#dp-frame {
+    border-radius: 0 !important;
+}
+/* icity 夜间顶部栏文字强制白色 */
+.dp-night-on .icity-topbar,
+.dp-night-on .icity-header,
+.dp-night-on .icity-title,
+.dp-night-on .icity-nav,
+.dp-night-on [class*="icity"] [class*="top"],
+.dp-night-on [class*="icity"] [class*="header"],
+.dp-night-on [class*="icity"] [class*="nav"] {
+    color: #ffffff !important;
+}
+.dp-night-on [class*="icity"] .icity-title,
+.dp-night-on [class*="icity"] .icity-header-text {
+    color: #ffffff !important;
 }

@@ -3668,6 +3668,7 @@ function injectShell() {
         const v = Number(getSettings().cardWidth) || 0;
         widthSlider.value = Math.min(Math.max(v, 0), 720);
         widthVal.textContent = v > 0 ? `${v}px` : '跟随模板';
+        try { var fr=document.getElementById("dp-frame"); if(fr&&fr.contentDocument){ var cw=fr.contentDocument.querySelector(".dp-card-wrap"); if(cw){ if(v>0){cw.style.width=v+"px";cw.style.maxWidth="none";}else{cw.style.width="";cw.style.maxWidth="";} fitFrame(); } } } catch(e){}
         const num = document.getElementById('dp-set-width');
         if (num) num.value = v > 0 ? String(v) : '';
     };
