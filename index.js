@@ -1137,7 +1137,7 @@ function buildCardHtml({
     beName = '',
 }) {
     const avatarBlock = avatarUrl
-        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" width="42" height="42" style="width:42px;height:42px;object-fit:cover;display:block;border-radius:4px">`
+        ? `<div class="be-char-avatar" style="width:42px;height:42px;background-image:url(&quot;${esc(avatarUrl)}&quot;);background-size:cover;background-position:center;border-radius:4px;flex-shrink:0"></div>`
         : `<div class="be-char-avatar"></div>`;
     return `
     <div class="be-card be-custom" style="--be-quote-size:${quoteSize}px;--be-quote-lh:${quoteLh};--be-quote-ls:${quoteLs}em">
@@ -3323,15 +3323,15 @@ function injectShell() {
         }
       }
       cv.onmousedown=cv.ontouchstart=function(e){e.preventDefault();e.stopPropagation();drawing=true;applyStyle();var p=pos(e);lastX=p.x;lastY=p.y;if(brushState.type==="mosaic"){mosaicDot(p.x,p.y);}else{ctx.beginPath();ctx.arc(p.x,p.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}};
-      cv.onmousemove=cv.ontouchmove=function(e){e.preventDefault();var p=pos(e);if(brushOn||mosaicOn&&'ontouchstart'in window){var rect=cv.getBoundingClientRect();showMagnifier(rect.left+p.x,rect.top+p.y,cv);}if(!drawing)return;if(brushState.type==="mosaic"){var dist=Math.hypot(p.x-lastX,p.y-lastY);var step=Math.max(1,mosaicSize/4);var n=Math.max(1,Math.floor(dist/step));for(var i=1;i<=n;i++){var t=i/n;mosaicDot(lastX+(p.x-lastX)*t,lastY+(p.y-lastY)*t);}}else{ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();}lastX=p.x;lastY=p.y;};
-      cv.onmouseup=cv.onmouseleave=cv.ontouchend=function(){drawing=false;hideMagnifier();};
+      cv.onmousemove=cv.ontouchmove=function(e){e.preventDefault();var p=pos(e);if(brushOn||mosaicOn&&'ontouchstart'in window){}if(!drawing)return;if(brushState.type==="mosaic"){var dist=Math.hypot(p.x-lastX,p.y-lastY);var step=Math.max(1,mosaicSize/4);var n=Math.max(1,Math.floor(dist/step));for(var i=1;i<=n;i++){var t=i/n;mosaicDot(lastX+(p.x-lastX)*t,lastY+(p.y-lastY)*t);}}else{ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();}lastX=p.x;lastY=p.y;};
+      cv.onmouseup=cv.onmouseleave=cv.ontouchend=function(){drawing=false;};
     }
     function toggleBrush(on) {
       brushOn=on;
       if(brushBar) brushBar.style.display=on?'block':'none';
       if(brushBtn){ brushBtn.style.background=on?'#1a1a1a':''; brushBtn.style.color=on?'#fff':''; }
       if(on){
-        if(mosaicOn){ mosaicOn=false; if(mosaicBar)mosaicBar.style.display="none"; if(mosaicBtn){mosaicBtn.style.background="";mosaicBtn.style.color="";} hideMagnifier(); }
+        if(mosaicOn){ mosaicOn=false; if(mosaicBar)mosaicBar.style.display="none"; if(mosaicBtn){mosaicBtn.style.background="";mosaicBtn.style.color="";}  }
         var selT=document.querySelector(".dp-brush-t.active");
         brushState.type = selT ? selT.dataset.t : "pen";
         setupBrushCanvas();
@@ -3349,35 +3349,6 @@ function injectShell() {
     const mosaicBtn = document.getElementById('dp-btn-mosaic');
     const mosaicBar = document.getElementById('dp-mosaic-bar');
     let mosaicOn=false, mosaicStyle='blocks', mosaicSize=14;
-    let magCanvas=null, magCtx=null, magnifierEl=null;
-
-    function setupMagnifier() {
-      if (magnifierEl) return;
-      magnifierEl = document.createElement('div');
-      magnifierEl.id = 'dp-magnifier';
-      magnifierEl.style.cssText = 'position:fixed;width:110px;height:110px;border-radius:50%;border:2px solid #fff;box-shadow:0 4px 20px rgba(0,0,0,.3);overflow:hidden;z-index:100001;pointer-events:none;display:none;background:#222;';
-      magCanvas = document.createElement('canvas');
-      magCanvas.width = 220; magCanvas.height = 220;
-      magCanvas.style.cssText = 'width:100%;height:100%;display:block;';
-      magnifierEl.appendChild(magCanvas);
-      magCtx = magCanvas.getContext('2d');
-      document.body.appendChild(magnifierEl);
-    }
-    function showMagnifier(absX, absY, drawCanvas) {
-      if (!magnifierEl || !magCtx || !drawCanvas) return;
-      magnifierEl.style.display = 'block';
-      magnifierEl.style.left = (absX - 55) + 'px';
-      magnifierEl.style.top = (absY - 150) + 'px';
-      var dpr = window.devicePixelRatio || 1;
-      var sw = 55, sh = 55;
-      var rect = drawCanvas.getBoundingClientRect();
-      var lx = absX - rect.left, ly = absY - rect.top;
-      magCtx.clearRect(0,0,220,220);
-      try {
-        magCtx.drawImage(drawCanvas, (lx-sw/2)*dpr, (ly-sh/2)*dpr, sw*dpr, sh*dpr, 0, 0, 220, 220);
-      } catch(e) {}
-    }
-    function hideMagnifier() { if (magnifierEl) magnifierEl.style.display = 'none'; }
 
     let mosaicSrcCv=null, mosaicSrcReady=false;
     function initMosaicSource() {
@@ -3437,11 +3408,10 @@ function injectShell() {
       if (on) {
         // 互斥：开马赛克时关画笔
         if(brushOn){ brushOn=false; if(brushBar)brushBar.style.display='none'; if(brushBtn){brushBtn.style.background='';brushBtn.style.color='';} }
-        setupMagnifier();
         setupBrushCanvas();
         brushState.type = 'mosaic';
       } else {
-        hideMagnifier();
+        
       }
     }
     if (mosaicBtn) mosaicBtn.addEventListener('click', function(){ toggleMosaic(!mosaicOn); });
