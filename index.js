@@ -1137,7 +1137,7 @@ function buildCardHtml({
     beName = '',
 }) {
     const avatarBlock = avatarUrl
-        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" style="width:52px;height:52px;object-fit:cover;display:block;border-radius:50%">`
+        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" width="42" height="42" style="width:42px;height:42px;object-fit:cover;display:block;border-radius:4px">`
         : `<div class="be-char-avatar"></div>`;
     return `
     <div class="be-card be-custom" style="--be-quote-size:${quoteSize}px;--be-quote-lh:${quoteLh};--be-quote-ls:${quoteLs}em">
@@ -3399,25 +3399,34 @@ function injectShell() {
       brushCtx.save();
       brushCtx.globalCompositeOperation = "source-over";
       if (mosaicStyle === "blur") {
-        brushCtx.fillStyle = "rgba(120,120,120,0.5)";
+        // 模糊：半透明灰圆
+        brushCtx.fillStyle = "rgba(100,100,100,0.45)";
         brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
       } else if (mosaicStyle === "solid") {
-        brushCtx.fillStyle = "#888";
+        // 纯色：实心深灰圆
+        brushCtx.fillStyle = "#666";
         brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
-      } else if (mosaicSrcReady && mosaicSrcCv) {
-        // blocks/pixel：从截图采样像素化
-        var ps = mosaicStyle === "pixel" ? Math.max(3, Math.floor(s/4)) : Math.max(4, Math.floor(s/2));
-        var sx = Math.floor(cx - s/2), sy = Math.floor(cy - s/2);
-        brushCtx.imageSmoothingEnabled = false;
-        for (var dy=0; dy<s; dy+=ps) {
-          for (var dx=0; dx<s; dx+=ps) {
-            var sw = Math.min(ps, s-dx), sh = Math.min(ps, s-dy);
-            brushCtx.drawImage(mosaicSrcCv, sx+dx, sy+dy, sw, sh, cx-s/2+dx, cy-s/2+dy, sw, sh);
+      } else if (mosaicStyle === "pixel") {
+        // 像素：小方块棋盘格
+        var ps = Math.max(3, Math.floor(s/4));
+        var sx = Math.floor((cx-s/2)/ps)*ps, sy = Math.floor((cy-s/2)/ps)*ps;
+        for (var y=sy; y<cy+s/2; y+=ps) {
+          for (var x=sx; x<cx+s/2; x+=ps) {
+            var idx = Math.round(x/ps)+Math.round(y/ps);
+            brushCtx.fillStyle = (idx%2===0) ? "#888" : "#aaa";
+            brushCtx.fillRect(x, y, ps, ps);
           }
         }
       } else {
+        // 方块：大块灰色方块
+        var ps2 = Math.max(6, Math.floor(s/1.5));
+        var sx2 = Math.floor((cx-s/2)/ps2)*ps2, sy2 = Math.floor((cy-s/2)/ps2)*ps2;
         brushCtx.fillStyle = "#999";
-        brushCtx.fillRect(cx-s/2, cy-s/2, s, s);
+        for (var y=sy2; y<cy+s/2; y+=ps2) {
+          for (var x=sx2; x<cx+s/2; x+=ps2) {
+            brushCtx.fillRect(x, y, ps2, ps2);
+          }
+        }
       }
       brushCtx.restore();
     }
