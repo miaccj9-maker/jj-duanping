@@ -3381,19 +3381,19 @@ function injectShell() {
 
     let mosaicSrcCv=null, mosaicSrcReady=false;
     function initMosaicSource() {
+    function initMosaicSource() {
       mosaicSrcReady=false;
       var frame=document.getElementById("dp-frame");
       if(!frame||!frame.contentWindow||!frame.contentDocument) return;
       var card=frame.contentDocument.querySelector(".dp-card-wrap");
       if(!card) return;
-      try {
-        frame.contentWindow.html2canvas(card,{scale:1,useCORS:true,backgroundColor:null,width:card.offsetWidth,height:card.offsetHeight,logging:false}).then(function(offCv){
+      ensureHtml2canvas(frame).then(function(h2c){
+        h2c(card,{scale:1,useCORS:true,backgroundColor:null,width:card.offsetWidth,height:card.offsetHeight,logging:false}).then(function(offCv){
           mosaicSrcCv=offCv;
           mosaicSrcReady=true;
         });
-      } catch(e){}
+      });
     }
-    function mosaicDot(cx, cy) {
       if (!brushCtx) return;
       var s = mosaicSize;
       brushCtx.save();
