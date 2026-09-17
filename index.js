@@ -3339,11 +3339,12 @@ function injectShell() {
     }
     if(brushBtn) brushBtn.addEventListener('click',function(){ toggleBrush(!brushOn); });
     if(brushBar){
-      brushBar.querySelectorAll('.dp-brush-t').forEach(function(b){ b.addEventListener('click',function(){ brushState.type=b.dataset.t; }); });
+      brushBar.querySelectorAll('.dp-brush-t').forEach(function(b){ b.addEventListener('click',function(){ brushBar.querySelectorAll('.dp-brush-t').forEach(function(x){x.classList.remove('active');x.style.background='';x.style.color='';}); b.classList.add('active'); b.style.background='#1a1a1a'; b.style.color='#fff'; brushState.type=b.dataset.t; }); });
       var sz=document.getElementById('dp-brush-size'); if(sz) sz.addEventListener('input',function(e){ brushState.size=parseInt(e.target.value)||3; });
       var col=document.getElementById('dp-brush-color'); if(col) col.addEventListener('input',function(e){ brushState.color=e.target.value; });
       var cl=document.getElementById('dp-brush-clear'); if(cl) cl.addEventListener('click',function(){ if(brushCtx&&brushCanvas) brushCtx.clearRect(0,0,brushCanvas.width,brushCanvas.height); });
       var dn=document.getElementById('dp-brush-done'); if(dn) dn.addEventListener('click',function(){ toggleBrush(false); });
+    }
     // ===== 马赛克（涂抹式）+ 放大镜（防手指遮挡） =====
     const mosaicBtn = document.getElementById('dp-btn-mosaic');
     const mosaicBar = document.getElementById('dp-mosaic-bar');
@@ -3430,7 +3431,6 @@ function injectShell() {
         if (brushCtx && brushCanvas) brushCtx.clearRect(0,0,brushCanvas.width,brushCanvas.height);
       });
       document.getElementById('dp-mosaic-done').addEventListener('click', function(){ toggleMosaic(false); });
-    }
     }
     // launcher 可拖动 + 记忆位置
     (function(){
