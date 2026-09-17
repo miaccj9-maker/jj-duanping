@@ -3399,18 +3399,33 @@ function injectShell() {
     function mosaicDot(cx, cy) {
       if (!brushCtx) return;
       var s = mosaicSize;
-      var ps = Math.max(3, Math.floor(s/4));
       brushCtx.save();
       brushCtx.globalCompositeOperation = "source-over";
-      // 均匀像素块：深浅交替灰色，覆盖涂抹区域
-      var startX = Math.floor((cx - s/2) / ps) * ps;
-      var startY = Math.floor((cy - s/2) / ps) * ps;
-      for (var y=startY; y<cy+s/2; y+=ps) {
-        for (var x=startX; x<cx+s/2; x+=ps) {
-          var idx = Math.round(x/ps) + Math.round(y/ps);
-          brushCtx.fillStyle = (idx%2===0) ? "#888" : "#aaa";
+      if (mosaicStyle === "blocks") {
+        // 方块：均匀灰色方块
+        var ps = Math.max(4, Math.floor(s/2));
+        var sx = Math.floor(cx/ps)*ps, sy = Math.floor(cy/ps)*ps;
+        for (var y=sy; y<cy+s; y+=ps) for (var x=sx; x<cx+s; x+=ps) {
+          brushCtx.fillStyle = "#999";
           brushCtx.fillRect(x, y, ps, ps);
         }
+      } else if (mosaicStyle === "pixel") {
+        // 像素：小方块棋盘格
+        var ps2 = Math.max(3, Math.floor(s/4));
+        var sx2 = Math.floor((cx-s/2)/ps2)*ps2, sy2 = Math.floor((cy-s/2)/ps2)*ps2;
+        for (var y=sy2; y<cy+s/2; y+=ps2) for (var x=sx2; x<cx+s/2; x+=ps2) {
+          var idx = Math.round(x/ps2)+Math.round(y/ps2);
+          brushCtx.fillStyle = (idx%2===0) ? "#888" : "#aaa";
+          brushCtx.fillRect(x, y, ps2, ps2);
+        }
+      } else if (mosaicStyle === "blur") {
+        // 模糊：半透明灰圆
+        brushCtx.fillStyle = "rgba(120,120,120,0.5)";
+        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
+      } else {
+        // 纯色：实心灰圆
+        brushCtx.fillStyle = "#888";
+        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
       }
       brushCtx.restore();
     }
@@ -3430,7 +3445,7 @@ function injectShell() {
     }
     if (mosaicBtn) mosaicBtn.addEventListener('click', function(){ toggleMosaic(!mosaicOn); });
     if (mosaicBar) {
-      mosaicBar.querySelectorAll('.dp-mosaic-t').forEach(function(b){ b.addEventListener('click', function(){ mosaicStyle = b.dataset.m; }); });
+      mosaicBar.querySelectorAll('.dp-mosaic-t').forEach(function(b){ b.addEventListener('click', function(){ mosaicBar.querySelectorAll('.dp-mosaic-t').forEach(function(x){x.classList.remove('active');x.style.background='';x.style.color='';}); b.classList.add('active'); b.style.background='#1a1a1a'; b.style.color='#fff'; mosaicStyle = b.dataset.m; }); });
       var sz = document.getElementById('dp-mosaic-size');
       if (sz) sz.addEventListener('input', function(e){ mosaicSize = parseInt(e.target.value) || 14; });
       document.getElementById('dp-mosaic-clear').addEventListener('click', function(){
