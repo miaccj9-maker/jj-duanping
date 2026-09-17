@@ -3301,7 +3301,7 @@ function injectShell() {
       cv.style.width=wrap.offsetWidth+'px'; cv.style.height=wrap.offsetHeight+'px';
       var dpr=window.devicePixelRatio||1;
       if(cv.getAttribute('data-init')!=='1'){ cv.width=wrap.offsetWidth*dpr; cv.height=wrap.offsetHeight*dpr; cv.setAttribute('data-init','1'); }
-      brushCanvas=cv; brushCtx=cv.getContext('2d'); brushCtx.scale(dpr,dpr);
+      if(cv.getAttribute('data-init')!=='1'){ brushCtx.scale(dpr,dpr); }
       var drawing=false,lastX=0,lastY=0;
       function pos(e){var r=cv.getBoundingClientRect();var p=e.touches?e.touches[0]:e;return{x:p.clientX-r.left,y:p.clientY-r.top};}
       function applyStyle(){
@@ -3511,7 +3511,7 @@ function injectShell() {
 
     // iframe 加载完成后自适应高度
     const dpFrame = document.getElementById('dp-frame');
-    if (dpFrame) dpFrame.addEventListener('load', fitFrame);
+    if (dpFrame) dpFrame.addEventListener("load", function(){ fitFrame(); if(brushOn||mosaicOn){ setTimeout(setupBrushCanvas, 200); } });
     document.getElementById('dp-extra-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') generateRatings();
     });
