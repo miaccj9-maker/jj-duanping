@@ -3399,28 +3399,20 @@ function injectShell() {
     function mosaicDot(cx, cy) {
       if (!brushCtx) return;
       var s = mosaicSize;
-      // 真马赛克：从 offscreen canvas 采样缩小再放大
-      if (mosaicSrcReady && mosaicSrcCtx) {
-        var ps = Math.max(2, Math.floor(s/4)); // 采样块大小
-        var sx = Math.floor(cx - s/2), sy = Math.floor(cy - s/2);
-        // 从源 canvas 截取一块，缩小到 ps x ps，再放大回 s x s
-        brushCtx.save();
-        brushCtx.imageSmoothingEnabled = false;
-        for (var dy=0; dy<s; dy+=ps) {
-          for (var dx=0; dx<s; dx+=ps) {
-            var sampleW = Math.min(ps, s-dx), sampleH = Math.min(ps, s-dy);
-            brushCtx.drawImage(mosaicSrcCv, sx+dx, sy+dy, sampleW, sampleH, cx-s/2+dx, cy-s/2+dy, sampleW, sampleH);
-          }
+      var ps = Math.max(3, Math.floor(s/4));
+      brushCtx.save();
+      brushCtx.globalCompositeOperation = "source-over";
+      // 均匀像素块：深浅交替灰色，覆盖涂抹区域
+      var startX = Math.floor((cx - s/2) / ps) * ps;
+      var startY = Math.floor((cy - s/2) / ps) * ps;
+      for (var y=startY; y<cy+s/2; y+=ps) {
+        for (var x=startX; x<cx+s/2; x+=ps) {
+          var idx = Math.round(x/ps) + Math.round(y/ps);
+          brushCtx.fillStyle = (idx%2===0) ? "#888" : "#aaa";
+          brushCtx.fillRect(x, y, ps, ps);
         }
-        brushCtx.restore();
-      } else {
-        // 兜底：灰色方块
-        brushCtx.save();
-        brushCtx.globalCompositeOperation = "source-over";
-        brushCtx.fillStyle = "#999";
-        brushCtx.fillRect(cx-s/2, cy-s/2, s, s);
-        brushCtx.restore();
       }
+      brushCtx.restore();
     }
     function toggleMosaic(on) {
       mosaicOn = on;
