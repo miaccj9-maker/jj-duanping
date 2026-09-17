@@ -3379,35 +3379,49 @@ function injectShell() {
     }
     function hideMagnifier() { if (magnifierEl) magnifierEl.style.display = 'none'; }
 
+    let mosaicSrcCv=null, mosaicSrcCtx=null, mosaicSrcReady=false;
+    function ensureMosaicSource() {
+      if (mosaicSrcReady) return;
+      var frame=document.getElementById("dp-frame");
+      if(!frame||!frame.contentDocument) return;
+      var card=frame.contentDocument.querySelector(".dp-card-wrap");
+      if(!card) return;
+      mosaicSrcCv=frame.contentDocument.createElement("canvas");
+      mosaicSrcCv.width=card.offsetWidth; mosaicSrcCv.height=card.offsetHeight;
+      mosaicSrcCtx=mosaicSrcCv.getContext("2d");
+      // 用 html2canvas 截图卡片到 offscreen canvas
+      try {
+        frame.contentWindow.html2canvas(card,{scale:1,useCORS:true,backgroundColor:null,width:card.offsetWidth,height:card.offsetHeight,logging:false}).then(function(offCv){
+          if(offCv){ mosaicSrcCtx.drawImage(offCv,0,0); mosaicSrcReady=true; }
+        });
+      } catch(e){}
+    }
     function mosaicDot(cx, cy) {
       if (!brushCtx) return;
       var s = mosaicSize;
-      brushCtx.save();
-      brushCtx.globalCompositeOperation = 'source-over';
-      if (mosaicStyle === 'pixel') {
-        var ps = 4;
-        for (var dy=0; dy<s; dy+=ps) for (var dx=0; dx<s; dx+=ps) {
-          brushCtx.fillStyle = ((dx/ps+dy/ps) % 2 === 0) ? '#999' : '#bbb';
-          brushCtx.fillRect(cx - s/2 + dx, cy - s/2 + dy, ps, ps);
+      // 真马赛克：从 offscreen canvas 采样缩小再放大
+      if (mosaicSrcReady && mosaicSrcCtx) {
+        var ps = Math.max(2, Math.floor(s/4)); // 采样块大小
+        var sx = Math.floor(cx - s/2), sy = Math.floor(cy - s/2);
+        // 从源 canvas 截取一块，缩小到 ps x ps，再放大回 s x s
+        brushCtx.save();
+        brushCtx.imageSmoothingEnabled = false;
+        for (var dy=0; dy<s; dy+=ps) {
+          for (var dx=0; dx<s; dx+=ps) {
+            var sampleW = Math.min(ps, s-dx), sampleH = Math.min(ps, s-dy);
+            brushCtx.drawImage(mosaicSrcCv, sx+dx, sy+dy, sampleW, sampleH, cx-s/2+dx, cy-s/2+dy, sampleW, sampleH);
+          }
         }
-      } else if (mosaicStyle === 'blur') {
-        brushCtx.fillStyle = 'rgba(120,120,120,0.45)';
-        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
-      } else if (mosaicStyle === 'solid') {
-        brushCtx.fillStyle = '#888';
-        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
+        brushCtx.restore();
       } else {
-        var bs = s/3;
-        var colors = ['#999','#bbb','#999','#bbb','#999','#bbb','#999','#bbb','#999'];
-        var ci = 0;
-        for (var dy=0; dy<3; dy++) for (var dx=0; dx<3; dx++) {
-          brushCtx.fillStyle = colors[ci++];
-          brushCtx.fillRect(cx - s/2 + dx*bs, cy - s/2 + dy*bs, bs, bs);
-        }
+        // 兜底：灰色方块
+        brushCtx.save();
+        brushCtx.globalCompositeOperation = "source-over";
+        brushCtx.fillStyle = "#999";
+        brushCtx.fillRect(cx-s/2, cy-s/2, s, s);
+        brushCtx.restore();
       }
-      brushCtx.restore();
     }
-
     function toggleMosaic(on) {
       mosaicOn = on;
       if (mosaicBar) mosaicBar.style.display = on ? 'block' : 'none';
