@@ -3286,40 +3286,44 @@ function injectShell() {
       });
     })();
     function setupBrushCanvas() {
-      var frame=document.getElementById('dp-frame');
+      var frame=document.getElementById("dp-frame");
       if(!frame||!frame.contentDocument)return;
       var idoc=frame.contentDocument;
-      var wrap=idoc.querySelector('.dp-card-wrap');
+      var wrap=idoc.querySelector(".dp-card-wrap");
       if(!wrap)return;
-      var cv=idoc.getElementById('dp-draw-canvas');
-      if(!cv){
-        cv=idoc.createElement('canvas'); cv.id='dp-draw-canvas';
-        cv.style.cssText='position:absolute;left:0;top:0;z-index:99999;touch-action:none;';
-        if(getComputedStyle(wrap).position==='static') wrap.style.position='relative';
-        wrap.appendChild(cv);
-      }
-      cv.style.width=wrap.offsetWidth+'px'; cv.style.height=wrap.offsetHeight+'px';
+      // 每次都删旧建新，确保干净
+      var oldCv=idoc.getElementById("dp-draw-canvas");
+      if(oldCv) oldCv.remove();
+      var cv=idoc.createElement("canvas");
+      cv.id="dp-draw-canvas";
+      if(getComputedStyle(wrap).position==="static") wrap.style.position="relative";
+      var w=wrap.offsetWidth, h=wrap.offsetHeight;
+      if(!w||!h) return;
       var dpr=window.devicePixelRatio||1;
-      if(cv.getAttribute('data-init')!=='1'){ cv.width=wrap.offsetWidth*dpr; cv.height=wrap.offsetHeight*dpr; cv.setAttribute('data-init','1'); }
-      if(cv.getAttribute('data-init')!=='1'){ brushCtx.scale(dpr,dpr); }
+      cv.style.cssText="position:absolute;left:0;top:0;z-index:99999;touch-action:none;width:"+w+"px;height:"+h+"px;pointer-events:auto;";
+      cv.width=w*dpr; cv.height=h*dpr;
+      wrap.appendChild(cv);
+      var ctx=cv.getContext("2d");
+      ctx.scale(dpr,dpr);
+      brushCanvas=cv; brushCtx=ctx;
       var drawing=false,lastX=0,lastY=0;
       function pos(e){var r=cv.getBoundingClientRect();var p=e.touches?e.touches[0]:e;return{x:p.clientX-r.left,y:p.clientY-r.top};}
       function applyStyle(){
         var t=brushState.type, s=brushState.size;
-        brushCtx.lineCap='round'; brushCtx.lineJoin='round';
-        if(t==='eraser'){ brushCtx.globalCompositeOperation='destination-out'; brushCtx.lineWidth=s*3; brushCtx.globalAlpha=1; }
+        ctx.lineCap="round"; ctx.lineJoin="round";
+        if(t==="eraser"){ ctx.globalCompositeOperation="destination-out"; ctx.lineWidth=s*3; ctx.globalAlpha=1; }
         else {
-          brushCtx.globalCompositeOperation='source-over';
-          brushCtx.strokeStyle=brushState.color;
-          if(t==='pencil'){brushCtx.lineWidth=Math.max(1,s*0.6);brushCtx.globalAlpha=1;}
-          else if(t==='pen'){brushCtx.lineWidth=s;brushCtx.globalAlpha=1;}
-          else if(t==='crayon'){brushCtx.lineWidth=s*1.6;brushCtx.globalAlpha=0.85;}
-          else if(t==='marker'){brushCtx.lineWidth=s*3;brushCtx.globalAlpha=0.5;}
-          else if(t==='water'){brushCtx.lineWidth=s*4;brushCtx.globalAlpha=0.25;}
+          ctx.globalCompositeOperation="source-over";
+          ctx.strokeStyle=brushState.color; ctx.fillStyle=brushState.color;
+          if(t==="pencil"){ctx.lineWidth=Math.max(1,s*0.6);ctx.globalAlpha=1;}
+          else if(t==="pen"){ctx.lineWidth=s;ctx.globalAlpha=1;}
+          else if(t==="crayon"){ctx.lineWidth=s*1.6;ctx.globalAlpha=0.85;}
+          else if(t==="marker"){ctx.lineWidth=s*3;ctx.globalAlpha=0.5;}
+          else if(t==="water"){ctx.lineWidth=s*4;ctx.globalAlpha=0.25;}
         }
       }
-      cv.onmousedown=cv.ontouchstart=function(e){drawing=true;applyStyle();var p=pos(e);lastX=p.x;lastY=p.y;if(e.cancelable)e.preventDefault();if(brushState.type==='mosaic'){mosaicDot(p.x,p.y);}else{brushCtx.beginPath();brushCtx.arc(p.x,p.y,brushCtx.lineWidth/2,0,Math.PI*2);brushCtx.fill();}};
-      cv.onmousemove=cv.ontouchmove=function(e){if(e.cancelable)e.preventDefault();var p=pos(e);if(brushOn||mosaicOn){var rect=cv.getBoundingClientRect();showMagnifier(rect.left+p.x,rect.top+p.y,cv);}if(!drawing)return;if(brushState.type==='mosaic'){var dist=Math.hypot(p.x-lastX,p.y-lastY);var step=mosaicSize/2;var n=Math.max(1,Math.floor(dist/step));for(var i=1;i<=n;i++){var t=i/n;mosaicDot(lastX+(p.x-lastX)*t,lastY+(p.y-lastY)*t);}}else{brushCtx.beginPath();brushCtx.moveTo(lastX,lastY);brushCtx.lineTo(p.x,p.y);brushCtx.stroke();}lastX=p.x;lastY=p.y;};
+      cv.onmousedown=cv.ontouchstart=function(e){e.preventDefault();e.stopPropagation();drawing=true;applyStyle();var p=pos(e);lastX=p.x;lastY=p.y;if(brushState.type==="mosaic"){mosaicDot(p.x,p.y);}else{ctx.beginPath();ctx.arc(p.x,p.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}};
+      cv.onmousemove=cv.ontouchmove=function(e){e.preventDefault();var p=pos(e);if(brushOn||mosaicOn){var rect=cv.getBoundingClientRect();showMagnifier(rect.left+p.x,rect.top+p.y,cv);}if(!drawing)return;if(brushState.type==="mosaic"){var dist=Math.hypot(p.x-lastX,p.y-lastY);var step=Math.max(1,mosaicSize/2);var n=Math.max(1,Math.floor(dist/step));for(var i=1;i<=n;i++){var t=i/n;mosaicDot(lastX+(p.x-lastX)*t,lastY+(p.y-lastY)*t);}}else{ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();}lastX=p.x;lastY=p.y;};
       cv.onmouseup=cv.onmouseleave=cv.ontouchend=function(){drawing=false;hideMagnifier();};
     }
     function toggleBrush(on) {
