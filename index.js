@@ -1137,7 +1137,7 @@ function buildCardHtml({
     beName = '',
 }) {
     const avatarBlock = avatarUrl
-        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;display:block">`
+        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" style="width:52px;height:52px;object-fit:cover;display:block;border-radius:50%">`
         : `<div class="be-char-avatar"></div>`;
     return `
     <div class="be-card be-custom" style="--be-quote-size:${quoteSize}px;--be-quote-lh:${quoteLh};--be-quote-ls:${quoteLs}em">
@@ -3381,7 +3381,6 @@ function injectShell() {
 
     let mosaicSrcCv=null, mosaicSrcReady=false;
     function initMosaicSource() {
-    function initMosaicSource() {
       mosaicSrcReady=false;
       var frame=document.getElementById("dp-frame");
       if(!frame||!frame.contentWindow||!frame.contentDocument) return;
@@ -3394,6 +3393,7 @@ function injectShell() {
         });
       });
     }
+    function mosaicDot(cx, cy) {
       if (!brushCtx) return;
       var s = mosaicSize;
       brushCtx.save();
