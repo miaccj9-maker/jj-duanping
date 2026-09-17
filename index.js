@@ -2749,7 +2749,7 @@ async function downloadCardImage() {
                 await ensureHtml2canvas(frame);
                 try { if (frame.contentDocument) frame.contentDocument.querySelectorAll('.dp-collage-word').forEach((w) => { const m = (w.className || '').match(/dp-paper-(\w+)/); if (m && paperDl[m[1]] !== undefined) w.style.backgroundImage = paperDl[m[1]]; }); } catch { /* ignore */ }
                 try { if (frame.contentDocument.fonts && frame.contentDocument.fonts.ready) await frame.contentDocument.fonts.ready; } catch { /* ignore */ }
-                const canvas2 = await frame.contentWindow.html2canvas(card, { scale: 1, useCORS: true, backgroundColor: null, width: card.scrollWidth, height: card.scrollHeight, windowWidth: card.scrollWidth, logging: false });
+                const canvas2 = await frame.contentWindow.html2canvas(card, { scale: 4, useCORS: true, backgroundColor: null, width: card.scrollWidth, height: card.scrollHeight, windowWidth: card.scrollWidth, logging: false });
                 const blob2 = await new Promise((res) => canvas2.toBlob(res, 'image/png'));
                 if (blob2) { downloadBlob(blob2, filename); toast('warning', 'SVG 渲染受限，已用兼容模式下载'); return; }
             } catch (e2) { /* fallthrough */ }

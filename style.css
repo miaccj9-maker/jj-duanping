@@ -765,7 +765,7 @@
 .dp-frame-box {
     display: flex;
     justify-content: center;
-    background: repeating-conic-gradient(#f3f3f3 0% 25%, #ececec 0% 50%) 0 0 / 18px 18px;
+    background: #ffffff;
     border: 1px solid var(--dp-ins-hairline);
     border-radius: 14px;
     padding: 16px;
@@ -1262,3 +1262,22 @@
     }
     /* 隐藏任何意外显示的 file input 默认按钮 */
     input[type="file"] { display: none !important; }
+
+/* 夜间模式：Ins名片统计数字/日期强制白色清晰 */
+.dp-night-on .dp-ins-stat,
+.dp-night-on .dp-ins-stat-num,
+.dp-night-on .dp-ins-stat-label,
+.dp-night-on .dp-ins-date,
+.dp-night-on .dp-ins-handle,
+.dp-night-on [class*="ins-stat"],
+.dp-night-on [class*="ins-date"],
+.dp-night-on [class*="post-count"],
+.dp-night-on [class*="follower"],
+.dp-night-on [class*="following"] {
+    color: #e8e8e8 !important;
+}
+/* 卡片预览容器：不要棋盘格底图，直接白 */
+.dp-frame-box {
+    background: #ffffff !important;
+    border-radius: 14px;
+}
