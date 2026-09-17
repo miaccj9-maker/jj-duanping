@@ -3307,7 +3307,7 @@ function injectShell() {
       ctx.scale(dpr,dpr);
       brushCanvas=cv; brushCtx=ctx;
       var drawing=false,lastX=0,lastY=0;
-      function pos(e){var r=cv.getBoundingClientRect();var p=e.touches?e.touches[0]:e;return{x:p.clientX-r.left,y:p.clientY-r.top};}
+      function pos(e){var r=cv.getBoundingClientRect();var p=e.touches?e.touches[0]:e;var ratio=(frame._scaleRatio||1);return{x:(p.clientX-r.left)/ratio,y:(p.clientY-r.top)/ratio};}
       function applyStyle(){
         var t=brushState.type, s=brushState.size;
         ctx.lineCap="round"; ctx.lineJoin="round";
