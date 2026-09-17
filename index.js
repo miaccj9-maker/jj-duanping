@@ -3379,20 +3379,17 @@ function injectShell() {
     }
     function hideMagnifier() { if (magnifierEl) magnifierEl.style.display = 'none'; }
 
-    let mosaicSrcCv=null, mosaicSrcCtx=null, mosaicSrcReady=false;
-    function ensureMosaicSource() {
-      if (mosaicSrcReady) return;
+    let mosaicSrcCv=null, mosaicSrcReady=false;
+    function initMosaicSource() {
+      mosaicSrcReady=false;
       var frame=document.getElementById("dp-frame");
-      if(!frame||!frame.contentDocument) return;
+      if(!frame||!frame.contentWindow||!frame.contentDocument) return;
       var card=frame.contentDocument.querySelector(".dp-card-wrap");
       if(!card) return;
-      mosaicSrcCv=frame.contentDocument.createElement("canvas");
-      mosaicSrcCv.width=card.offsetWidth; mosaicSrcCv.height=card.offsetHeight;
-      mosaicSrcCtx=mosaicSrcCv.getContext("2d");
-      // 用 html2canvas 截图卡片到 offscreen canvas
       try {
         frame.contentWindow.html2canvas(card,{scale:1,useCORS:true,backgroundColor:null,width:card.offsetWidth,height:card.offsetHeight,logging:false}).then(function(offCv){
-          if(offCv){ mosaicSrcCtx.drawImage(offCv,0,0); mosaicSrcReady=true; }
+          mosaicSrcCv=offCv;
+          mosaicSrcReady=true;
         });
       } catch(e){}
     }
@@ -3401,31 +3398,21 @@ function injectShell() {
       var s = mosaicSize;
       brushCtx.save();
       brushCtx.globalCompositeOperation = "source-over";
-      if (mosaicStyle === "blocks") {
-        // 方块：均匀灰色方块
-        var ps = Math.max(4, Math.floor(s/2));
-        var sx = Math.floor(cx/ps)*ps, sy = Math.floor(cy/ps)*ps;
-        for (var y=sy; y<cy+s; y+=ps) for (var x=sx; x<cx+s; x+=ps) {
-          brushCtx.fillStyle = "#999";
-          brushCtx.fillRect(x, y, ps, ps);
+      if (mosaicSrcReady && mosaicSrcCv) {
+        // 真马赛克：从截图采样缩小再放大
+        var ps = Math.max(3, Math.floor(s/4));
+        var sx = Math.floor(cx - s/2), sy = Math.floor(cy - s/2);
+        brushCtx.imageSmoothingEnabled = false;
+        for (var dy=0; dy<s; dy+=ps) {
+          for (var dx=0; dx<s; dx+=ps) {
+            var sw = Math.min(ps, s-dx), sh = Math.min(ps, s-dy);
+            brushCtx.drawImage(mosaicSrcCv, sx+dx, sy+dy, sw, sh, cx-s/2+dx, cy-s/2+dy, sw, sh);
+          }
         }
-      } else if (mosaicStyle === "pixel") {
-        // 像素：小方块棋盘格
-        var ps2 = Math.max(3, Math.floor(s/4));
-        var sx2 = Math.floor((cx-s/2)/ps2)*ps2, sy2 = Math.floor((cy-s/2)/ps2)*ps2;
-        for (var y=sy2; y<cy+s/2; y+=ps2) for (var x=sx2; x<cx+s/2; x+=ps2) {
-          var idx = Math.round(x/ps2)+Math.round(y/ps2);
-          brushCtx.fillStyle = (idx%2===0) ? "#888" : "#aaa";
-          brushCtx.fillRect(x, y, ps2, ps2);
-        }
-      } else if (mosaicStyle === "blur") {
-        // 模糊：半透明灰圆
-        brushCtx.fillStyle = "rgba(120,120,120,0.5)";
-        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
       } else {
-        // 纯色：实心灰圆
-        brushCtx.fillStyle = "#888";
-        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
+        // 兜底灰色
+        brushCtx.fillStyle = "#999";
+        brushCtx.fillRect(cx-s/2, cy-s/2, s, s);
       }
       brushCtx.restore();
     }
