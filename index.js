@@ -3323,7 +3323,7 @@ function injectShell() {
         }
       }
       cv.onmousedown=cv.ontouchstart=function(e){e.preventDefault();e.stopPropagation();drawing=true;applyStyle();var p=pos(e);lastX=p.x;lastY=p.y;if(brushState.type==="mosaic"){mosaicDot(p.x,p.y);}else{ctx.beginPath();ctx.arc(p.x,p.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}};
-      cv.onmousemove=cv.ontouchmove=function(e){e.preventDefault();var p=pos(e);if(brushOn||mosaicOn){var rect=cv.getBoundingClientRect();showMagnifier(rect.left+p.x,rect.top+p.y,cv);}if(!drawing)return;if(brushState.type==="mosaic"){var dist=Math.hypot(p.x-lastX,p.y-lastY);var step=Math.max(1,mosaicSize/2);var n=Math.max(1,Math.floor(dist/step));for(var i=1;i<=n;i++){var t=i/n;mosaicDot(lastX+(p.x-lastX)*t,lastY+(p.y-lastY)*t);}}else{ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();}lastX=p.x;lastY=p.y;};
+      cv.onmousemove=cv.ontouchmove=function(e){e.preventDefault();var p=pos(e);if(brushOn||mosaicOn&&'ontouchstart'in window){var rect=cv.getBoundingClientRect();showMagnifier(rect.left+p.x,rect.top+p.y,cv);}if(!drawing)return;if(brushState.type==="mosaic"){var dist=Math.hypot(p.x-lastX,p.y-lastY);var step=Math.max(1,mosaicSize/4);var n=Math.max(1,Math.floor(dist/step));for(var i=1;i<=n;i++){var t=i/n;mosaicDot(lastX+(p.x-lastX)*t,lastY+(p.y-lastY)*t);}}else{ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();}lastX=p.x;lastY=p.y;};
       cv.onmouseup=cv.onmouseleave=cv.ontouchend=function(){drawing=false;hideMagnifier();};
     }
     function toggleBrush(on) {
