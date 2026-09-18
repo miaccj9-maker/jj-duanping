@@ -2965,7 +2965,7 @@ function injectShell() {
               <input type="range" id="dp-width-slider" min="0" max="720" step="10" value="0" title="0 = 跟随模板宽度">
               <span id="dp-width-val" class="dp-width-val">跟随模板</span>
             </div>
-            <button type="button" id="dp-btn-sticker" class="dp-btn dp-btn-sm">贴纸</button>
+            <button type="button" id="dp-btn-bg-upload" class="dp-btn dp-btn-sm" title="上传背景图">背景图</button><button type="button" id="dp-btn-bg-color" class="dp-btn dp-btn-sm" title="纯色背景">纯色</button><input type="color" id="dp-bg-color-picker" value="#f5eedd" style="display:none"><button type="button" id="dp-btn-sticker" class="dp-btn dp-btn-sm">贴纸</button>
             <button type="button" id="dp-btn-brush" class="dp-btn dp-btn-sm">画笔</button><button type="button" id="dp-btn-text" class="dp-btn dp-btn-sm">文本</button>
             <button type="button" id="dp-btn-mosaic" class="dp-btn dp-btn-sm">马赛克</button>
             <button type="button" id="dp-btn-collage-main" class="dp-btn dp-btn-sm">拼贴诗</button>
@@ -3828,6 +3828,26 @@ function injectShell() {
     });
 
     // 贴纸
+    // 工具栏背景图按钮 -> 复用现有 bgFileInput
+    const toolbarBgUpload = document.getElementById('dp-btn-bg-upload');
+    if (toolbarBgUpload) toolbarBgUpload.addEventListener('click', () => bgFileInput.click());
+    // 工具栏纯色背景按钮
+    const toolbarBgColor = document.getElementById('dp-btn-bg-color');
+    const toolbarBgColorPicker = document.getElementById('dp-bg-color-picker');
+    if (toolbarBgColor && toolbarBgColorPicker) {
+        toolbarBgColor.addEventListener('click', () => toolbarBgColorPicker.click());
+        toolbarBgColorPicker.addEventListener('input', (e) => {
+            const s = getSettings();
+            s.bgColor = e.target.value;
+            s.bgImage = '';
+            saveSettingsDebounced();
+            renderCard();
+            toolbarBgColor.style.background = e.target.value;
+            const r=parseInt(e.target.value.slice(1,3),16),g=parseInt(e.target.value.slice(3,5),16),b=parseInt(e.target.value.slice(5,7),16);
+            toolbarBgColor.style.color = (r*0.299+g*0.587+b*0.114>186)?'#1a1a1a':'#fff';
+            if (toolbarBgUpload) { toolbarBgUpload.style.background=''; toolbarBgUpload.style.color=''; }
+        });
+    }
     document.getElementById('dp-btn-sticker').addEventListener('click', openStickerModal);
     document.getElementById('dp-sticker-close').addEventListener('click', () => {
         document.getElementById('dp-sticker-modal').style.display = 'none';
