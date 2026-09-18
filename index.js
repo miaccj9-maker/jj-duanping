@@ -1517,7 +1517,7 @@ async function renderCard() {
         const totalH = ((cardH > 0 ? cardH : 280) + 16) + 64;
         const ratio = wRatio; // 字号宽度主导：变宽变大、变窄变小，不被高度拖累
         // 单行自适应：能容纳则占白边高70%，文字多则缩至一行能放下（不换行）
-        titleSize = Math.min(Math.round(srcH * 0.7), Math.max(9, Math.floor(((cardW > 0 ? cardW : 340) - 32) * 0.96 / len)));
+        titleSize = Math.min(Math.round(srcH * 0.85), Math.max(9, Math.floor(((cardW > 0 ? cardW : 340) - 32) * 0.96 / len)));
         // 单行模式：无迭代换行
         nameSize = Math.max(10, Math.round(nameSize * ratio));
         dateSize = Math.max(9, Math.round(dateSize * ratio));
