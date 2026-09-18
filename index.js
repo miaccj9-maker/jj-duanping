@@ -3491,7 +3491,7 @@ function injectShell() {
         });
     });
 
-    // ===== 文本功能（可拖动可编辑文字） =====
+    // ===== 文本功能（可拖动可编辑文字，带确认） =====
     const textBtn = document.getElementById('dp-btn-text');
     let textOn = false;
     function addTextToCard() {
@@ -3501,22 +3501,22 @@ function injectShell() {
         if (!wrap) return;
         const t = frame.contentDocument.createElement('div');
         t.className = 'dp-text-item';
-        t.contentEditable = 'true';
-        t.textContent = '双击编辑文字';
-        t.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:8px 12px;min-width:60px;min-height:32px;background:rgba(255,255,255,0.9);color:#333;font-size:20px;font-family:inherit;cursor:move;border-radius:4px;outline:none;z-index:99998;user-select:none;';
+        t.contentEditable = 'false';
+        t.textContent = '双击编辑';
+        t.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:8px 12px;min-width:60px;min-height:32px;background:rgba(255,255,255,0.95);color:#333;font-size:20px;font-family:inherit;cursor:move;border-radius:4px;outline:none;z-index:99998;user-select:none;';
         wrap.appendChild(t);
-        // 拖动
-        let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+        let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0, editing = false;
+        // 单击：选中+拖动（不进入编辑）
         t.addEventListener('mousedown', function(e) {
-            if (e.target === t && document.activeElement !== t) {
-                dragging = true; sx = e.clientX; sy = e.clientY;
-                const rect = t.getBoundingClientRect();
-                const wrapRect = wrap.getBoundingClientRect();
-                ox = rect.left - wrapRect.left; oy = rect.top - wrapRect.top;
-                t.style.transform = 'none';
-                t.style.left = ox + 'px'; t.style.top = oy + 'px';
-                e.preventDefault();
-            }
+            if (editing) return;
+            e.stopPropagation(); e.preventDefault();
+            dragging = true; sx = e.clientX; sy = e.clientY;
+            const rect = t.getBoundingClientRect();
+            const wrapRect = wrap.getBoundingClientRect();
+            ox = rect.left - wrapRect.left; oy = rect.top - wrapRect.top;
+            t.style.transform = 'none';
+            t.style.left = ox + 'px'; t.style.top = oy + 'px';
+            t.style.outline = '2px dashed #1a1a1a';
         });
         document.addEventListener('mousemove', function(e) {
             if (!dragging) return;
@@ -3524,10 +3524,39 @@ function injectShell() {
             t.style.top = (oy + e.clientY - sy) + 'px';
         });
         document.addEventListener('mouseup', function() { dragging = false; });
-        // 双击编辑
-        t.addEventListener('dblclick', function() { t.focus(); document.execCommand('selectAll', false, null); });
-        // 失焦时如果为空则删除
-        t.addEventListener('blur', function() { if (!t.textContent.trim()) t.remove(); });
+        // 双击：进入编辑模式
+        t.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            editing = true;
+            t.contentEditable = 'true';
+            t.style.cursor = 'text';
+            t.style.outline = '2px solid #1a1a1a';
+            t.focus();
+            const range = document.createRange(); range.selectNodeContents(t);
+            const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+        });
+        // Enter确认，Esc取消
+        t.addEventListener('keydown', function(e) {
+            if (!editing) return;
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                finishEdit();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                finishEdit();
+            }
+        });
+        function finishEdit() {
+            editing = false;
+            t.contentEditable = 'false';
+            t.style.cursor = 'move';
+            t.style.outline = 'none';
+            if (!t.textContent.trim()) t.remove();
+        }
+        // 点击卡片空白处取消选中
+        wrap.addEventListener('mousedown', function(e) {
+            if (e.target === wrap && !editing) t.style.outline = 'none';
+        });
     }
     if (textBtn) textBtn.addEventListener('click', function() {
         textOn = !textOn;
