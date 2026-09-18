@@ -2876,6 +2876,10 @@ function injectShell() {
   <span class="dp-fb-icon">✎</span>
   <span class="dp-fb-label">段评</span>
 </div>
+<div id="dp-float-save" style="display:none;" title="存档这段文字">
+  <span class="dp-fb-icon">⤓</span>
+  <span class="dp-fb-label">存档</span>
+</div>
 
 <div id="dp-launcher" title="打开晋江段评面板">
   <span class="dp-launcher-icon">✎</span>
@@ -3281,6 +3285,39 @@ function injectShell() {
         e.stopPropagation();
         openDuanpingPanel();
     });
+    // 浮动存档按钮：只存档不打开面板
+    const floatSaveBtn = document.getElementById('dp-float-save');
+    if (floatSaveBtn) floatSaveBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sel = window.getSelection();
+        const text = sel ? sel.toString().trim() : '';
+        if (!text) { toast('warning', '请先选中一段文字'); return; }
+        const s = getSettings();
+        const arch = {
+            id: 'a_' + Date.now().toString(36) + '_' + Math.floor(Math.random() * 1e6).toString(36),
+            time: new Date().toISOString(),
+            quote: text,
+            comments: [],
+            templateId: s.activeTemplateId,
+            bookTitle: s.bookTitle || '',
+            chapterText: s.chapterText || '',
+            watermarkText: s.watermarkText || '',
+            quoteSize: s.quoteSize ?? 15,
+            quoteLh: s.quoteLh ?? 1.6,
+            quoteLs: s.quoteLs ?? 0,
+            cardWidth: s.cardWidth || 0,
+            captureEngine: s.captureEngine || 'auto',
+            nightMode: !!s.nightMode,
+            stickers: (s.stickers || []).map((x) => ({ ...x })),
+            charName: (typeof char !== 'undefined' && char.name) ? char.name : '',
+        };
+        const list = loadArchives();
+        list.unshift(arch);
+        saveArchives(list);
+        hideFloatButton();
+        toast('success', '已存档');
+    });
+
 
     // 常驻入口按钮
     const launcher = document.getElementById('dp-launcher');
