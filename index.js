@@ -1402,7 +1402,7 @@ async function renderCard() {
         html = html.replace('</style>', '.Qixian-moments-wrap{background:#17171a!important;}.Qixian-moments-text{color:#e8e8e8!important;}.Qixian-moments-name{color:#7ab8ff!important;}.Qixian-moments-location{color:#7ab8ff!important;}.Qixian-moments-music-title{color:#e8e8e8!important;}.Qixian-moments-music-author{color:#999!important;}.Qixian-moments-time{color:#888!important;}.qm-replies .qm-reply{background:#2a2e35!important;color:#e0e0e0!important;}.qm-replies .qm-reply b{color:#7ab8ff!important;}.Qixian-moments-action-trigger{background:#2a2e35!important;}.Qixian-moments-action-trigger .dot{background:#7ab8ff!important;}</style>');
         }
     } else {
-    html = collageCardHtml || (buildCardHtml({
+    html = (collageCardHtml ? collageCardHtml + stickersHtml : null) || (buildCardHtml({
         quote,
         authorName,
         avatarUrl: authorAvatar,
