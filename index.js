@@ -79,6 +79,7 @@ const defaultSettings = {
     quoteLh: 1.6,
     quoteLs: 0, // 字距（em），0 = 模板默认
     cardWidth: 0, // 0/空 = 跟随模板自带宽度；>0 = 强制图片宽度(px)
+    cardHeight: 0, // 0/空 = 跟随内容高度；>0 = 强制卡片高度(px)
     // 自填 API（可选；开启后生成走这里，否则走酒馆已连接的 App）
     apiEnabled: false,
     apiUrl: '',
@@ -1461,6 +1462,10 @@ async function renderCard() {
     const widthCss = (cardW > 0)
         ? `.dp-card-wrap{width:${cardW}px!important;max-width:none!important}.be-card.be-custom{width:100%!important;max-width:${cardW}px!important}`
         : '';
+    const cardH = Number(settings.cardHeight);
+    const heightCss = (cardH > 0)
+        ? `.be-card.be-custom{height:${cardH}px!important}.be-card.be-custom.polaroid-card{display:flex!important;flex-direction:column}.be-card.be-custom.polaroid-card .be-quote{flex:1 1 auto;min-height:0}`
+        : '';
     // 背景图模板：图片背景 + 透明底文字（无水印/角色名/选自），文字可拖动、改色、改字号
     // （拼贴模式 collageCardHtml 非空时，普通背景图 CSS 与文字拖动全部跳过）
     const bgCss = (isBgTpl && !collageCardHtml) && settings.bgImage
@@ -1501,6 +1506,7 @@ async function renderCard() {
 <style>${CARD_BASE_CSS}</style>
 <style>${commentCss}</style>
 ${widthCss ? `<style>${widthCss}</style>` : ''}
+${heightCss ? `<style>${heightCss}</style>` : ''}
 ${wmRealCss ? `<style>${wmRealCss}</style>` : ''}
 ${ticketDateCss ? `<style>${ticketDateCss}</style>` : ''}
 ${nightCss ? `<style>${nightCss}</style>` : ''}
@@ -3012,6 +3018,11 @@ function injectShell() {
               <input type="range" id="dp-width-slider" min="0" max="720" step="10" value="0" title="0 = 跟随模板宽度">
               <span id="dp-width-val" class="dp-width-val">跟随模板</span>
             </div>
+            <div class="dp-width-ctl">
+              <span class="dp-width-tag">高度</span>
+              <input type="range" id="dp-height-slider" min="0" max="1200" step="10" value="0" title="0 = 跟随内容高度">
+              <span id="dp-height-val" class="dp-width-val">自适应</span>
+            </div>
             <button type="button" id="dp-btn-bg-upload" class="dp-btn dp-btn-sm" title="上传背景图">背景图</button><button type="button" id="dp-btn-bg-color" class="dp-btn dp-btn-sm" title="纯色背景">纯色</button><input type="color" id="dp-bg-color-picker" value="#f5eedd" style="display:none"><button type="button" id="dp-btn-sticker" class="dp-btn dp-btn-sm">贴纸</button>
             <button type="button" id="dp-btn-brush" class="dp-btn dp-btn-sm">画笔</button><button type="button" id="dp-btn-text" class="dp-btn dp-btn-sm">文本</button>
             <button type="button" id="dp-btn-mosaic" class="dp-btn dp-btn-sm">马赛克</button>
@@ -3348,6 +3359,7 @@ function injectShell() {
             quoteLh: s.quoteLh ?? 1.6,
             quoteLs: s.quoteLs ?? 0,
             cardWidth: s.cardWidth || 0,
+            cardHeight: s.cardHeight || 0,
             captureEngine: s.captureEngine || 'auto',
             nightMode: !!s.nightMode,
             stickers: (s.stickers || []).map((x) => ({ ...x })),
@@ -3857,6 +3869,23 @@ function injectShell() {
         if (num) num.value = v > 0 ? String(v) : '';
     });
     widthSlider.addEventListener('change', () => { saveSettingsDebounced(); renderCard(); });
+    const heightSlider = document.getElementById('dp-height-slider');
+    const heightVal = document.getElementById('dp-height-val');
+    const syncHeightSlider = () => {
+        if (!heightSlider || !heightVal) return;
+        const v = Number(getSettings().cardHeight) || 0;
+        heightSlider.value = Math.min(Math.max(v, 0), 1200);
+        heightVal.textContent = v > 0 ? `${v}px` : '自适应';
+    };
+    if (heightSlider) {
+        heightSlider.addEventListener('input', () => {
+            const v = Number(heightSlider.value) || 0;
+            getSettings().cardHeight = v;
+            saveSettingsDebounced();
+            heightVal.textContent = v > 0 ? `${v}px` : '自适应';
+        });
+        heightSlider.addEventListener('change', () => { saveSettingsDebounced(); renderCard(); });
+    }
 
     // 日间/夜间切换
     const nightBtn = document.getElementById('dp-btn-night');
@@ -4734,6 +4763,7 @@ function saveCurrentArchive() {
         quoteLh: s.quoteLh ?? 1.6,
         quoteLs: s.quoteLs ?? 0,
         cardWidth: s.cardWidth || 0,
+        cardHeight: s.cardHeight || 0,
         captureEngine: s.captureEngine || 'auto',
         nightMode: !!s.nightMode,
         charName: (typeof char !== 'undefined' && char.name) ? char.name : '',
@@ -4817,6 +4847,7 @@ async function restoreArchive(id) {
         if (a.quoteLh) s.quoteLh = a.quoteLh;
         if (a.quoteLs !== undefined) s.quoteLs = a.quoteLs;
         if (a.cardWidth !== undefined) s.cardWidth = a.cardWidth;
+        if (a.cardHeight !== undefined) s.cardHeight = a.cardHeight;
         if (a.captureEngine) s.captureEngine = a.captureEngine;
         if (a.nightMode !== undefined) s.nightMode = !!a.nightMode;
         if (a.stickers !== undefined) s.stickers = (a.stickers || []).map((x) => ({ ...x }));
@@ -4836,6 +4867,7 @@ async function restoreArchive(id) {
         if (typeof refreshTemplateSelect === 'function') await refreshTemplateSelect();
         if (typeof syncNightBtn === 'function') syncNightBtn();
         if (typeof syncWidthSlider === 'function') syncWidthSlider();
+        if (typeof syncHeightSlider === 'function') syncHeightSlider();
         await renderCommentList();
         await renderCard();
         toast('success', '存档已恢复');
@@ -4987,6 +5019,7 @@ async function openDuanpingPanel() {
     document.getElementById('dp-api-key').value = settings.apiKey || '';
     refreshModelSelect(false);
     if (typeof syncWidthSlider === 'function') syncWidthSlider();
+    if (typeof syncHeightSlider === 'function') syncHeightSlider();
     if (typeof syncNightBtn === 'function') syncNightBtn();
 
     await renderCard();
