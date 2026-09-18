@@ -864,8 +864,11 @@ async function resolveTemplateCss(id) {
         const key = id.slice('builtin:'.length);
         try {
             const json = await fetchBuiltinTemplateJson(key);
-            return json.css || '';
-        } catch {
+            const css = json.css || '';
+            console.log('[jj-duanping] resolveTemplateCss key=', key, 'cssLen=', css.length, 'cssStart=', css.substring(0, 80));
+            return css;
+        } catch (e) {
+            console.error('[jj-duanping] resolveTemplateCss fetch error key=', key, e);
             return EMERGENCY_CSS;
         }
     }
