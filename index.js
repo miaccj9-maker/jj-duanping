@@ -1503,16 +1503,16 @@ async function renderCard() {
     if (isPolaroid) {
         const polaroidTitleText = settings.polaroidTitle || '祝好，祝当下祝每一个明天都好';
         const len = polaroidTitleText.length;
-        let titleSize = 100; // 底部白边140px的72%：标题字号尽量占据白边高度
+        let titleSize = 45; // 标题字号默认=白边70%(45px)，下方循环按完整放下调整
         // if (len > 14) titleSize = 30;
         // if (len > 18) titleSize = 26;
         // if (len > 23) titleSize = 20;
         // if (len > 29) titleSize = 16;
-        let srcH = 64; // 底部白边基础64px，标题行数多时自适应加高容纳完整大字
-        const _tlFs = Math.round(64 * 0.7); // 标题字号=白边70%(45px)固定大字
-        const _perLine = Math.max(1, Math.floor(((cardW > 0 ? cardW : 340) - 32) * 0.96 / _tlFs));
-        const _lines = Math.ceil(len / _perLine);
-        srcH = Math.max(64, Math.ceil(_lines * _tlFs * 1.15 + 12));
+        let srcH = 64; // 底部白边固定64px，不随标题/高度滑块变化
+        const _tlFs = Math.round(srcH * 0.7); // 标题字号上限=白边70%(45px)
+        titleSize = _tlFs; for (let _t = titleSize; _t >= 10; _t--) {
+          const _pw = Math.max(1, Math.floor(((cardW > 0 ? cardW : 340) - 32) * 0.96 / _t)); const _ln = Math.ceil(len / _pw); if (_ln * _t * 1.15 <= 52) { titleSize = _t; break; } }
+
         let nameSize = Number(settings.quoteSize) || 15;
         let dateSize = Number(settings.quoteSize) || 15;
         const wRatio = cardW > 0 ? (cardW / 340) : 1;
@@ -1521,7 +1521,7 @@ async function renderCard() {
         const totalH = ((cardH > 0 ? cardH : 280) + 16) + srcH;
         const ratio = wRatio; // 字号宽度主导：变宽变大、变窄变小，不被高度拖累
         // 单行自适应：能容纳则占白边高70%，文字多则缩至一行能放下（不换行）
-        titleSize = _tlFs; // 标题字号固定=白边70%(45px)大字，白边高度已按标题行数自适应
+        // 标题字号已由上面的循环确定为能完整放入64px白边内的最大字号
         // 单行模式：无迭代换行
         nameSize = Math.max(10, Math.round(nameSize * ratio));
         dateSize = Math.max(9, Math.round(dateSize * ratio));
