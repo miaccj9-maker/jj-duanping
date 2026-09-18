@@ -1137,7 +1137,7 @@ function buildCardHtml({
     beName = '',
 }) {
     const avatarBlock = avatarUrl
-        ? `<div class="be-char-avatar" style="width:42px;height:42px;flex-shrink:0;border-radius:50%;background-image:url(${esc(avatarUrl)});background-size:cover;background-position:center"></div>`
+        ? `<svg class="be-char-avatar" width="42" height="42" viewBox="0 0 42 42" style="width:42px;height:42px;flex-shrink:0;display:block"><defs><clipPath id="dp-avatar-clip"><circle cx="21" cy="21" r="21"/></clipPath></defs><image href="${esc(avatarUrl)}" x="0" y="0" width="42" height="42" clip-path="url(#dp-avatar-clip)" preserveAspectRatio="xMidYMid slice"/></svg>`
         : `<div class="be-char-avatar"></div>`;
     return `
     <div class="be-card be-custom" style="--be-quote-size:${quoteSize}px;--be-quote-lh:${quoteLh};--be-quote-ls:${quoteLs}em">
