@@ -3472,18 +3472,23 @@ function injectShell() {
                 menu.appendChild(wc);
             }
             if (wc.querySelector('[data-dp-wand]')) return true;
-            var btn = document.createElement('div');
-            btn.setAttribute('data-dp-wand', '1');
-            btn.className = 'fa-solid fa-pen-nib extensionsMenuExtensionButton';
-            btn.title = '晋江段评';
-            btn.style.cssText = 'cursor:pointer;padding:6px 10px;border-radius:8px;font-size:15px;text-align:center;';
-            btn.addEventListener('click', function(ev) {
+            var wrap = document.createElement('div');
+            wrap.setAttribute('data-dp-wand', '1');
+            wrap.title = '打开晋江段评面板';
+            var icon = document.createElement('div');
+            icon.className = 'fa-solid fa-pen-nib extensionsMenuExtensionButton';
+            icon.style.cssText = 'font-size:15px;';
+            var label = document.createElement('span');
+            label.textContent = '段评';
+            wrap.appendChild(icon);
+            wrap.appendChild(label);
+            wrap.addEventListener('click', function(ev) {
                 ev.stopPropagation();
                 var m = document.getElementById('extensionsMenu');
                 if (m) m.style.display = 'none';
                 openDuanpingPanel();
             });
-            wc.appendChild(btn);
+            wc.appendChild(wrap);
             return true;
         };
         if (!addEntry()) {
