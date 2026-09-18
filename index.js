@@ -1137,7 +1137,7 @@ function buildCardHtml({
     beName = '',
 }) {
     const avatarBlock = avatarUrl
-        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" style="width:42px;height:42px;object-fit:cover;display:block;flex-shrink:0;clip-path:circle(50%)" crossorigin="anonymous">`
+        ? `<div class="be-char-avatar" style="width:42px;height:42px;flex-shrink:0;border-radius:50%;background-image:url(${esc(avatarUrl)});background-size:cover;background-position:center;display:inline-block"></div>`
         : `<div class="be-char-avatar"></div>`;
     return `
     <div class="be-card be-custom" style="--be-quote-size:${quoteSize}px;--be-quote-lh:${quoteLh};--be-quote-ls:${quoteLs}em">
@@ -2795,10 +2795,9 @@ function showFloatButton(rect) {
     if (!btn) return;
     const w = btn.offsetWidth || 86;
     const h = btn.offsetHeight || 40;
-    let left = rect.left + rect.width / 2 - w / 2;
-    // 默认放在选区上方（用户偏好），上方放不下时回落到下方
-    let top = rect.top - h - 10;
-    if (top < 8) top = rect.bottom + 10;
+    let left = rect.right + 10;
+    let top = rect.top + rect.height / 2 - h / 2;
+    if (left + w > window.innerWidth - 8) left = rect.left - w - 10;
     left = Math.min(Math.max(8, left), window.innerWidth - w - 8);
     top = Math.min(Math.max(8, top), window.innerHeight - h - 8);
     btn.style.left = `${left}px`;
