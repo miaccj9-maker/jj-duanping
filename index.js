@@ -1427,6 +1427,18 @@ async function renderCard() {
     }
 
     const css = await resolveTemplateCss(settings.activeTemplateId);
+    // 拍立得模板：强制硬编码 CSS，确保模板文件加载失败也能生效
+    // 拍立得模板：强制硬编码 CSS，确保模板文件加载失败也能生效
+    const isPolaroidTpl = (settings.activeTemplateId === 'builtin:拍立得' || settings.activeTemplateId === 'builtin:拍立得夜间');
+    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:24px 24px 56px 24px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:66px;right:44px;z-index:3;text-align:right;pointer-events:none;}.be-card.be-custom .be-name{font-size:11px;color:rgba(255,255,255,.75);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-date{font-size:10px;color:rgba(255,255,255,.5);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-quote{display:block;margin:0;padding:24px 20px 48px 20px;background:#1a1a1a;color:#f5f5f5;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:0 15%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:16px;color:#2a2a2a;font-weight:600;cursor:pointer;text-align:center;width:100%;line-height:1.25;}`;
+    const POLAROID_NIGHT_CSS = `.be-card.be-custom{background:#1a1a1a!important;box-shadow:0 4px 16px rgba(0,0,0,.6)!important;}.be-card.be-custom .be-quote{background:#2a2a2a!important;color:#e8e8e8!important;}.be-card.be-custom .be-source .title{color:#f0f0f0!important;}.be-card.be-custom .be-name{color:rgba(255,255,255,.85)!important;}.be-card.be-custom .be-date{color:rgba(255,255,255,.6)!important;}`;
+    let finalCss = css;
+    let finalNight = tplNight;
+    if (isPolaroidTpl) {
+        finalCss = POLAROID_CSS;
+        if (settings.nightMode) finalNight = POLAROID_NIGHT_CSS;
+    }
+    }
     const commentCss = await resolveTemplateComments(settings.activeTemplateId);
     const tplNight = settings.nightMode ? await resolveTemplateNight(settings.activeTemplateId) : '';
     const nightCss = settings.nightMode ? NIGHT_CSS : '';
@@ -1470,7 +1482,7 @@ async function renderCard() {
 <head>
 <meta charset="utf-8">
 <base href="${location.origin}/">
-<style>${css}</style>
+<style>${finalCss}</style>
 <style>${CARD_BASE_CSS}</style>
 <style>${commentCss}</style>
 ${widthCss ? `<style>${widthCss}</style>` : ''}
@@ -1478,7 +1490,7 @@ ${wmRealCss ? `<style>${wmRealCss}</style>` : ''}
 ${ticketDateCss ? `<style>${ticketDateCss}</style>` : ''}
 ${nightCss ? `<style>${nightCss}</style>` : ''}
     ${polaroidTitleCss ? `<style>${polaroidTitleCss}</style>` : ''}
-${tplNight ? `<style>${tplNight}</style>` : ''}
+${finalNight ? `<style>${finalNight}</style>` : ''}
 ${bgCss ? `<style>${bgCss}</style>` : ''}
 ${bgTxtCss ? `<style>${bgTxtCss}</style>` : ''}
 ${fontCss ? `<style>${fontCss}</style>` : ''}
@@ -1536,7 +1548,6 @@ ${html}
             if (isBgTpl && !collageCardHtml) attachTextDrag(frame);
         }, { once: true });
 
-    }
     fitFrame();
     attachStickerDrag(frame);
     attachCollageDrag(frame);
