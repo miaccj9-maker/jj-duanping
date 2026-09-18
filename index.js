@@ -1462,7 +1462,7 @@ async function renderCard() {
     const commentCss = await resolveTemplateComments(settings.activeTemplateId);
     const tplNight = settings.nightMode ? await resolveTemplateNight(settings.activeTemplateId) : '';
     // 拍立得模板：强制硬编码 CSS
-    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:14px 14px 56px 14px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:64px;right:22px;z-index:3;text-align:right;pointer-events:none;max-width:64%;white-space:nowrap;}.be-card.be-custom .be-name{font-size:11px;color:rgba(0,0,0,.62);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-date{font-size:10px;color:rgba(0,0,0,.45);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-quote{display:block;margin:0;padding:18px 16px 48px 16px;background:#e9e9e7;color:#2b2b2b;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:0 12%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:18px;color:#2a2a2a;font-weight:700;cursor:pointer;text-align:center;width:100%;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}`;
+    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:14px 14px 56px 14px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:64px;right:22px;z-index:3;text-align:right;pointer-events:none;max-width:64%;white-space:nowrap;}.be-card.be-custom .be-name{font-size:14px;color:rgba(0,0,0,.62);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-date{font-size:12px;color:rgba(0,0,0,.45);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-quote{display:block;margin:0;padding:18px 16px 48px 16px;background:#e9e9e7;color:#2b2b2b;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:0 12%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:22px;color:#2a2a2a;font-weight:700;cursor:pointer;text-align:center;width:100%;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}`;
     const POLAROID_NIGHT_CSS = `.be-card.be-custom{background:#1a1a1a!important;box-shadow:0 4px 16px rgba(0,0,0,.6)!important;}.be-card.be-custom .be-quote{background:#2a2a2a!important;color:#e8e8e8!important;}.be-card.be-custom .be-source .title{color:#f0f0f0!important;}.be-card.be-custom .be-name{color:rgba(255,255,255,.85)!important;}.be-card.be-custom .be-date{color:rgba(255,255,255,.6)!important;}`;
     let finalCss = css;
     let finalNight = tplNight;
@@ -1503,18 +1503,22 @@ async function renderCard() {
     if (isPolaroid) {
         const polaroidTitleText = settings.polaroidTitle || '祝好，祝当下祝每一个明天都好';
         const len = polaroidTitleText.length;
-        let titleSize = 18;
-        if (len > 14) titleSize = 16;
-        if (len > 18) titleSize = 14;
-        if (len > 23) titleSize = 12;
-        if (len > 29) titleSize = 10;
+        let titleSize = 22;
+        if (len > 14) titleSize = 20;
+        if (len > 18) titleSize = 18;
+        if (len > 23) titleSize = 15;
+        if (len > 29) titleSize = 12;
         let srcH = 56;
+        let nameSize = 14;
+        let dateSize = 12;
         const wRatio = cardW > 0 ? Math.min(1, cardW / 340) : 1;
         if (wRatio < 1) {
             titleSize = Math.max(9, Math.round(titleSize * wRatio));
             srcH = Math.max(36, Math.round(56 * wRatio));
+            nameSize = Math.max(9, Math.round(nameSize * wRatio));
+            dateSize = Math.max(8, Math.round(dateSize * wRatio));
         }
-        polaroidTitleCss = '.be-card.be-custom{padding-bottom:' + srcH + 'px!important}.be-card.be-custom .be-source{height:' + srcH + 'px!important}.be-card.be-custom .be-source .title{font-size:' + titleSize + 'px!important;}';
+        polaroidTitleCss = '.be-card.be-custom{padding-bottom:' + srcH + 'px!important}.be-card.be-custom .be-source{height:' + srcH + 'px!important}.be-card.be-custom .be-source .title{font-size:' + titleSize + 'px!important;}.be-card.be-custom .be-name{font-size:' + nameSize + 'px!important;}.be-card.be-custom .be-date{font-size:' + dateSize + 'px!important;}';
     }
 
 
@@ -1544,7 +1548,7 @@ ${html}
 </div>
 <script>
 (function(){function pickFile(cb){var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=function(){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){cb(r.result);};r.readAsDataURL(f);};inp.click();}document.querySelectorAll('.be-char-avatar, .be-comment-avatar, .Qixian-moments-avatar').forEach(function(el){if(el.dataset.dpBound)return;el.dataset.dpBound=1;el.style.cursor='pointer';el.title='点击更换头像';el.addEventListener('click',function(){pickFile(function(u){if(el.tagName==='IMG'){el.src=u;}else{el.style.backgroundImage="url('"+u+"')";}});});});document.querySelectorAll('.be-source .author, .be-comment-name, .Qixian-moments-name, .be-comment-id, .be-wm-title, .be-wm-sub, .be-source .title, .be-source .chapter, .be-name').forEach(function(el){if(el.id==='qm_render_name')return;if(el.dataset.dpBound)return;el.dataset.dpBound=1;el.style.cursor='pointer';el.title='点击修改文字';el.addEventListener('click',function(){var v=prompt('修改文字',el.textContent||'');if(v!==null){el.textContent=v;if(el.classList.contains('title')&&el.closest('.polaroid-card')){var len=v.length,ts=18;if(len>14)ts=16;if(len>18)ts=14;if(len>23)ts=12;if(len>29)ts=10;el.style.setProperty('font-size',ts+'px','important');var _fs2=ts;for(var _j=0;_j<12;_j++){if(el.scrollWidth<=el.clientWidth+1||_fs2<=8)break;_fs2-=1;el.style.setProperty('font-size',_fs2+'px','important');}}}});});var cardEl=document.querySelector('.be-card');if(cardEl&&!cardEl.dataset.dpBgDbl){cardEl.dataset.dpBgDbl=1;cardEl.title='双击卡片空白处可上传背景图';cardEl.addEventListener('dblclick',function(e){if(e.target.closest('img,a,button,.be-quote,.be-comment,.be-source,.be-avatar,.be-char-avatar,.be-comment-avatar,.Qixian-moments-music,.Qixian-moments-avatar,.be-name,.author'))return;pickFile(function(u){var bg=cardEl.querySelector('.dp-ins-bg');if(!bg){bg=cardEl.ownerDocument.createElement('div');bg.className='dp-ins-bg';bg.style.cssText='position:absolute;top:0;left:0;right:0;height:120px;background-size:cover;background-position:center;background-repeat:no-repeat;z-index:1;pointer-events:none;';cardEl.insertBefore(bg,cardEl.firstChild);}bg.style.backgroundImage="url('"+u+"')";});});}var wmEl=document.querySelector('.be-watermark');if(wmEl&&!wmEl.dataset.dpWm){wmEl.dataset.dpWm=1;wmEl.style.cursor='pointer';wmEl.title='点击修改顶部文字';wmEl.addEventListener('click',function(){var v=prompt('修改顶部文字',wmEl.textContent||'');if(v!==null&&wmEl.firstChild)wmEl.firstChild.nodeValue=v;});}})();
-(function(){var _pt=document.querySelector('.be-card.be-custom.polaroid-card .be-source .title');if(_pt){var _fs=parseFloat(getComputedStyle(_pt).fontSize)||18;for(var _i=0;_i<12;_i++){if(_pt.scrollWidth<=_pt.clientWidth+1||_fs<=8)break;_fs-=1;_pt.style.setProperty('font-size',_fs+'px','important');}}})();
+(function(){var _els=[document.querySelector('.be-card.be-custom.polaroid-card .be-source .title'),document.querySelector('.be-card.be-custom.polaroid-card .be-name'),document.querySelector('.be-card.be-custom.polaroid-card .be-date')];for(var _e=0;_e<_els.length;_e++){var _pt=_els[_e];if(!_pt)continue;var _fs=parseFloat(getComputedStyle(_pt).fontSize)||18;for(var _i=0;_i<12;_i++){if(_pt.scrollWidth<=_pt.clientWidth+1||_fs<=8)break;_fs-=1;_pt.style.setProperty('font-size',_fs+'px','important');}}})();
 </script>
 </body>
 </html>`;
