@@ -3497,9 +3497,11 @@ function injectShell() {
     function addTextToCard() {
         const frame = document.getElementById('dp-frame');
         if (!frame || !frame.contentDocument) return;
-        const wrap = frame.contentDocument.querySelector('.dp-card-wrap');
+        const fdoc = frame.contentDocument;
+        const fwin = frame.contentWindow;
+        const wrap = fdoc.querySelector('.dp-card-wrap');
         if (!wrap) return;
-        const t = frame.contentDocument.createElement('div');
+        const t = fdoc.createElement('div');
         t.className = 'dp-text-item';
         t.contentEditable = 'false';
         t.textContent = '双击编辑';
@@ -3518,12 +3520,13 @@ function injectShell() {
             t.style.left = ox + 'px'; t.style.top = oy + 'px';
             t.style.outline = '2px dashed #1a1a1a';
         });
-        document.addEventListener('mousemove', function(e) {
+        // 拖动事件绑定在 iframe 内
+        fdoc.addEventListener('mousemove', function(e) {
             if (!dragging) return;
             t.style.left = (ox + e.clientX - sx) + 'px';
             t.style.top = (oy + e.clientY - sy) + 'px';
         });
-        document.addEventListener('mouseup', function() { dragging = false; });
+        fdoc.addEventListener('mouseup', function() { dragging = false; });
         // 双击：进入编辑模式
         t.addEventListener('dblclick', function(e) {
             e.stopPropagation();
@@ -3532,8 +3535,9 @@ function injectShell() {
             t.style.cursor = 'text';
             t.style.outline = '2px solid #1a1a1a';
             t.focus();
-            const range = document.createRange(); range.selectNodeContents(t);
-            const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+            // 用 iframe 内的 selection
+            const range = fdoc.createRange(); range.selectNodeContents(t);
+            const sel = fwin.getSelection(); sel.removeAllRanges(); sel.addRange(range);
         });
         // Enter确认，Esc取消
         t.addEventListener('keydown', function(e) {
@@ -3546,6 +3550,8 @@ function injectShell() {
                 finishEdit();
             }
         });
+        // 失焦也确认
+        t.addEventListener('blur', function() { if (editing) finishEdit(); });
         function finishEdit() {
             editing = false;
             t.contentEditable = 'false';
