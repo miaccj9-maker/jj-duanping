@@ -4504,12 +4504,17 @@ async function populateCharacterSelect() {
 }
 
 async function refreshTemplateSelect() {
-    const sel = document.getElementById('dp-tpl-select');
-    if (!sel) return;
-    const settings = getSettings();
-    const list = await getTemplateList();
-    sel.innerHTML = list.map((t) =>
-        `<option value="${esc(t.id)}" ${t.id === settings.activeTemplateId ? 'selected' : ''}>${esc(t.name)}（${esc(t.source)}）</option>`).join('');
+    try {
+        const sel = document.getElementById('dp-tpl-select');
+        if (!sel) return;
+        const settings = getSettings();
+        const list = await getTemplateList();
+        console.log('[jj-duanping] template list:', list.length, list.map(t => t.id));
+        sel.innerHTML = list.map((t) =>
+            `<option value="${esc(t.id)}" ${t.id === settings.activeTemplateId ? 'selected' : ''}>${esc(t.name)}（${esc(t.source)}）</option>`).join('');
+    } catch (e) {
+        console.error('[jj-duanping] refreshTemplateSelect error:', e);
+    }
 }
 
 // =====================================================================
