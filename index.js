@@ -179,7 +179,7 @@ body { padding: 1px; }
 }
 .be-card.be-custom .be-watermark .be-wm-sub {
   position: absolute;
-  top: 28px;
+  top: 36px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 12px;
@@ -191,7 +191,7 @@ body { padding: 1px; }
   white-space: nowrap;
   font-family: "Nightgazer 16", "Fixedsys", "NSimSun", "SimSun", "Courier New", monospace;
 }
-.be-card.be-custom .be-watermark { height: 42px !important; }
+.be-card.be-custom .be-watermark { height: 52px !important; }
 .be-card.be-custom .be-thought-main { display: block !important; }
 /* wrap 不设 max-width：宽度完全由 fitFrame 控制（否则与 iframe 宽度循环依赖，导致调宽无效） */
 .dp-card-wrap { width: max-content; }
@@ -1499,7 +1499,7 @@ async function renderCard() {
         : '';
     // 拍立得标题动态字号：文字越多字号越小；卡片被强制缩窄时，标题栏高度与标题字号等比缩小
     const isPolaroid = (settings.activeTemplateId && settings.activeTemplateId.indexOf('拍立得') >= 0);
-    let polaroidTitleCss = '';
+    let polaroidTitleCss = ''; let mainFontCss = ''; try { const _mf = window.getComputedStyle(document.body).fontFamily; if (_mf) { mainFontCss = '.be-card.be-custom,.be-card.be-custom *{font-family:' + _mf + '!important}'; } } catch (e) {}
     if (isPolaroid) {
         const polaroidTitleText = settings.polaroidTitle || '祝好，祝当下祝每一个明天都好';
         const len = polaroidTitleText.length;
@@ -1542,7 +1542,7 @@ ${heightCss ? `<style>${heightCss}</style>` : ''}
 ${wmRealCss ? `<style>${wmRealCss}</style>` : ''}
 ${ticketDateCss ? `<style>${ticketDateCss}</style>` : ''}
 ${nightCss ? `<style>${nightCss}</style>` : ''}
-    ${polaroidTitleCss ? `<style>${polaroidTitleCss}</style>` : ''}
+    ${polaroidTitleCss ? `<style>${polaroidTitleCss}</style>` : ''}${mainFontCss ? `<style>${mainFontCss}</style>` : ''}
 ${finalNight ? `<style>${finalNight}</style>` : ''}
 ${bgCss ? `<style>${bgCss}</style>` : ''}
 ${bgTxtCss ? `<style>${bgTxtCss}</style>` : ''}
