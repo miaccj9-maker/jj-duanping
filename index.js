@@ -1462,7 +1462,7 @@ async function renderCard() {
     const commentCss = await resolveTemplateComments(settings.activeTemplateId);
     const tplNight = settings.nightMode ? await resolveTemplateNight(settings.activeTemplateId) : '';
     // 拍立得模板：强制硬编码 CSS
-    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:16px 16px 64px 16px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:76px;right:22px;z-index:3;text-align:right;pointer-events:none;max-width:64%;white-space:nowrap;}.be-card.be-custom .be-name{font-size:15px;color:rgba(0,0,0,.62);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-date{font-size:15px;color:rgba(0,0,0,.45);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-quote{display:block;margin:0;padding:12px 10px 16px 10px;background:#e9e9e7;color:#2b2b2b;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:center;padding:0 15%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:32px;color:#2a2a2a;font-weight:700;cursor:pointer;text-align:center;width:100%;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}`;
+    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:16px 16px 165px 16px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:177px;right:22px;z-index:3;text-align:right;pointer-events:none;max-width:64%;white-space:nowrap;}.be-card.be-custom .be-name{font-size:15px;color:rgba(0,0,0,.62);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-date{font-size:15px;color:rgba(0,0,0,.45);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-quote{display:block;margin:0;padding:12px 10px 16px 10px;background:#e9e9e7;color:#2b2b2b;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:165px;display:flex;align-items:center;justify-content:center;padding:0 10%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:32px;color:#2a2a2a;font-weight:700;cursor:pointer;text-align:center;width:100%;line-height:1.15;white-space:normal;word-break:break-all;}`;
     const POLAROID_NIGHT_CSS = `.be-card.be-custom{background:#1a1a1a!important;box-shadow:0 4px 16px rgba(0,0,0,.6)!important;}.be-card.be-custom .be-quote{background:#2a2a2a!important;color:#e8e8e8!important;}.be-card.be-custom .be-source .title{color:#f0f0f0!important;}.be-card.be-custom .be-name{color:rgba(255,255,255,.85)!important;}.be-card.be-custom .be-date{color:rgba(255,255,255,.6)!important;}`;
     let finalCss = css;
     let finalNight = tplNight;
@@ -1503,21 +1503,22 @@ async function renderCard() {
     if (isPolaroid) {
         const polaroidTitleText = settings.polaroidTitle || '祝好，祝当下祝每一个明天都好';
         const len = polaroidTitleText.length;
-        let titleSize = 32;
-        if (len > 14) titleSize = 30;
-        if (len > 18) titleSize = 26;
-        if (len > 23) titleSize = 20;
-        if (len > 29) titleSize = 16;
-        let srcH = 64; // 底部白边固定64px(上左右16px的4倍宽横条)，不随高度滑块变化
+        let titleSize = 100; // 底部白边140px的72%：标题字号尽量占据白边高度
+        // if (len > 14) titleSize = 30;
+        // if (len > 18) titleSize = 26;
+        // if (len > 23) titleSize = 20;
+        // if (len > 29) titleSize = 16;
+        let srcH = 165; // 底部白边固定165px，不随高度滑块变化
         let nameSize = Number(settings.quoteSize) || 15;
         let dateSize = Number(settings.quoteSize) || 15;
         const wRatio = cardW > 0 ? (cardW / 340) : 1;
         // 综合缩放：宽度变宽字号变大、变窄变小；高度(卡片总高)变低时同步缩小，取较紧一维避免溢出
-        const baseTotalH = 360; // 340宽+默认正文280：总高=16+280+64，上左右线条16px底部白边64px
-        const totalH = ((cardH > 0 ? cardH : 280) + 16) + 64;
+        const baseTotalH = 461; // 340宽+默认正文280：总高=16+280+165
+        const totalH = ((cardH > 0 ? cardH : 280) + 16) + 165;
         const ratio = wRatio; // 字号宽度主导：变宽变大、变窄变小，不被高度拖累
-        titleSize = Math.max(9, Math.round(titleSize * ratio));
-        // 底部标题框高度固定=卡片总高75%，不随宽度比例缩放
+        titleSize = Math.max(14, Math.round(titleSize * ratio));
+        // 迭代换行：标题文字块总高占满白边70-80%，不省略不溢出
+        for (let _ti = 0; _ti < 50; _ti++) { const _perLine = Math.max(1, Math.floor((cardW > 0 ? cardW : 340) * 0.8 / titleSize)); const _lines = Math.ceil(len / _perLine); const _tot = _lines * titleSize * 1.15; if (_tot <= srcH * 0.85 || titleSize <= 12) break; titleSize -= 2; }
         nameSize = Math.max(10, Math.round(nameSize * ratio));
         dateSize = Math.max(9, Math.round(dateSize * ratio));
         polaroidTitleCss = '.be-card.be-custom{padding-bottom:' + srcH + 'px!important}.be-card.be-custom .be-source{height:' + srcH + 'px!important}.be-card.be-custom .be-head{bottom:' + Math.round(srcH + 12) + 'px!important}.be-card.be-custom .be-source .title{font-size:' + titleSize + 'px!important;}.be-card.be-custom .be-name{font-size:' + nameSize + 'px!important;}.be-card.be-custom .be-date{font-size:' + dateSize + 'px!important;}';
