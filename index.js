@@ -96,6 +96,7 @@ const defaultSettings = {
     stickerImages: [], // 用户上传的图片贴纸（dataURL 列表，localStorage 持久化）
     // 背景图模板：URL 或本地上传 base64（应用到当前卡片背景）
     bgImage: '',
+    fontFollow: true, // 模板字体跟随酒馆全局字体（可关闭）
     // 自定义字体链接（woff2/ttf/otf），卡片全部文本替换为该字体
     fontUrl: '',
     // 文本位移（px）：预览区拖动正文调整，下载同步
@@ -1499,7 +1500,7 @@ async function renderCard() {
         : '';
     // 拍立得标题动态字号：文字越多字号越小；卡片被强制缩窄时，标题栏高度与标题字号等比缩小
     const isPolaroid = (settings.activeTemplateId && settings.activeTemplateId.indexOf('拍立得') >= 0);
-    let polaroidTitleCss = ''; let mainFontCss = ''; try { const _mf = window.getComputedStyle(document.body).fontFamily; if (_mf) { mainFontCss = '.be-card.be-custom,.be-card.be-custom *{font-family:' + _mf + '!important}'; } } catch (e) {}
+    let polaroidTitleCss = ''; let mainFontCss = ''; if (settings.fontFollow !== false) { try { const _mf = window.getComputedStyle(document.body).fontFamily; if (_mf) { mainFontCss = '.be-card.be-custom,.be-card.be-custom *{font-family:' + _mf + '!important}'; } } catch (e) {} }
     if (isPolaroid) {
         const polaroidTitleText = settings.polaroidTitle || '祝好，祝当下祝每一个明天都好';
         const len = polaroidTitleText.length;
@@ -3112,7 +3113,7 @@ function injectShell() {
             <button type="button" id="dp-btn-brush" class="dp-btn dp-btn-sm">画笔</button><button type="button" id="dp-btn-text" class="dp-btn dp-btn-sm">文本</button>
             <button type="button" id="dp-btn-mosaic" class="dp-btn dp-btn-sm">马赛克</button>
             <button type="button" id="dp-btn-collage-main" class="dp-btn dp-btn-sm">拼贴诗</button>
-            <button type="button" id="dp-btn-night" class="dp-btn dp-btn-sm">夜间</button>
+            <button type="button" id="dp-btn-night" class="dp-btn dp-btn-sm">夜间</button><button type="button" id="dp-btn-font" class="dp-btn dp-btn-sm" title="模板字体跟随酒馆全局字体">字体</button>
           </div>
         </div>
         <div class="dp-frame-box">
@@ -3979,6 +3980,11 @@ function injectShell() {
         renderCard();
         toast(s.nightMode ? '已切换夜间模式' : '已切换日间模式');
     });
+    const fontBtn = document.getElementById('dp-btn-font');
+    const syncFontBtn = () => { if (!fontBtn) return; const _on = getSettings().fontFollow !== false; fontBtn.textContent = _on ? '字体跟随' : '字体原样'; fontBtn.classList.toggle('dp-night-on', _on); };
+    fontBtn.addEventListener('click', () => { const s = getSettings(); s.fontFollow = !(s.fontFollow !== false); saveSettingsDebounced(); syncFontBtn(); renderCard(); toast(s.fontFollow !== false ? '模板字体已跟随酒馆全局字体' : '模板字体已恢复模板自带'); });
+    syncFontBtn();
+
 
     // 自填 API
     document.getElementById('dp-api-enable').addEventListener('change', (e) => {
@@ -4948,6 +4954,7 @@ async function restoreArchive(id) {
         if (typeof populateCharacterSelect === 'function') await populateCharacterSelect();
         if (typeof refreshTemplateSelect === 'function') await refreshTemplateSelect();
         if (typeof syncNightBtn === 'function') syncNightBtn();
+        if (typeof syncFontBtn === 'function') syncFontBtn();
         if (typeof syncWidthSlider === 'function') syncWidthSlider();
         if (typeof syncHeightSlider === 'function') syncHeightSlider();
         await renderCommentList();
