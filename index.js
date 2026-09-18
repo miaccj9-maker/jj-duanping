@@ -3077,7 +3077,7 @@ function injectShell() {
 
         <div class="dp-sec-title dp-collapse-title" id="dp-bg-collapse-title" style="cursor:pointer;user-select:none;">背景图专属设置 ▾</div><div class="dp-bg-collapse-wrap" id="dp-bg-collapse-wrap"><div class="dp-row dp-bg-block" id="dp-bg-block">
           <div class="dp-field dp-grow">
-            <label>背景图（仅「背景图」模板生效；本地上传 = 下载高清无跨域）</label>
+            <label>背景图链接</label>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <input id="dp-set-bg" type="text" placeholder="粘贴图片链接，或点右侧上传">
               <button type="button" id="dp-btn-bgfile" class="dp-btn dp-btn-sm">上传图片</button>
