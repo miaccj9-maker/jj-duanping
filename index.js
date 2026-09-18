@@ -1462,6 +1462,7 @@ ${widthCss ? `<style>${widthCss}</style>` : ''}
 ${wmRealCss ? `<style>${wmRealCss}</style>` : ''}
 ${ticketDateCss ? `<style>${ticketDateCss}</style>` : ''}
 ${nightCss ? `<style>${nightCss}</style>` : ''}
+    ${polaroidTitleCss ? `<style>${polaroidTitleCss}</style>` : ''}
 ${tplNight ? `<style>${tplNight}</style>` : ''}
 ${bgCss ? `<style>${bgCss}</style>` : ''}
 ${bgTxtCss ? `<style>${bgTxtCss}</style>` : ''}
