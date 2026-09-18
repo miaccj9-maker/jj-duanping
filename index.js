@@ -1391,7 +1391,7 @@ async function renderCard() {
             const ch = (gimg && gimg.img && gimg.img.naturalHeight > 0) ? gimg.img.naturalHeight : (csize ? csize.H : 1470);
             const inner = buildCollageHtml(settings.collageWords, cw, ch);
             // 卡片宽度取背景图实际宽；高度由 img height:auto 按原图比例自动撑起（图片永不拉伸）
-            collageCardHtml = `<div class="be-card be-custom dp-collage-card" style="width:${cw}px;position:relative;overflow:visible;box-sizing:border-box;"><img src="${settings.bgImage}" alt="" style="display:block;width:100%;height:auto;z-index:0;pointer-events:none;">${inner}</div>`;
+            collageCardHtml = `<div class="be-card be-custom dp-collage-card" style="width:${cw}px;position:relative;overflow:visible;box-sizing:border-box;background-image:url('${settings.bgImage}');background-size:cover;background-position:center;"><img src="${settings.bgImage}" alt="" style="display:block;width:100%;height:auto;z-index:0;pointer-events:none;">${inner}</div>`;
         } else if (settings.collageWords.length) {
             // 无背景图：纯色画布拼贴（默认浅色，避免纯黑观感）
             const w0 = csize ? csize.W : 1080;
@@ -3515,7 +3515,7 @@ function injectShell() {
     function toggleBrush(on) {
       brushOn=on;
       if(brushBar) brushBar.style.display=on?'block':'none';
-      if(brushBtn){ brushBtn.style.background=on?'#1a1a1a':''; brushBtn.style.color=on?'#fff':''; }
+      if(brushBtn){ brushBtn.style.background=on?'#1a1a1a':''; brushBtn.style.color=on?'#fff':''; } if(!on&&brushCanvas){try{brushCanvas.remove();}catch(e){}} brushCanvas=null; brushCtx=null; drawUndoStack=[];
       if(on){
         if(mosaicOn){ mosaicOn=false; if(mosaicBar)mosaicBar.style.display="none"; if(mosaicBtn){mosaicBtn.style.background="";mosaicBtn.style.color="";}  }
         var selT=document.querySelector(".dp-brush-t.active");
@@ -3594,7 +3594,7 @@ function injectShell() {
     function toggleMosaic(on) {
       mosaicOn = on;
       if (mosaicBar) mosaicBar.style.display = on ? 'block' : 'none';
-      if (mosaicBtn) { mosaicBtn.style.background = on ? '#1a1a1a' : ''; mosaicBtn.style.color = on ? '#fff' : ''; }
+      if (mosaicBtn) { mosaicBtn.style.background = on ? '#1a1a1a' : ''; mosaicBtn.style.color = on ? '#fff' : ''; } if (!on && brushCanvas) { try { brushCanvas.remove(); } catch(e){} } brushCanvas = null; brushCtx = null; drawUndoStack = [];
       if (on) {
         // 互斥：开马赛克时关画笔
         if(brushOn){ brushOn=false; if(brushBar)brushBar.style.display='none'; if(brushBtn){brushBtn.style.background='';brushBtn.style.color='';} }
