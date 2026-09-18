@@ -1,3 +1,21 @@
+/* 头像强制固定尺寸，防止模板CSS覆盖 */
+.be-char-avatar {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  max-width: 42px !important;
+  max-height: 42px !important;
+  overflow: hidden !important;
+  border-radius: 4px !important;
+  flex-shrink: 0 !important;
+}
+.be-char-avatar img {
+  width: 42px !important;
+  height: 42px !important;
+  object-fit: cover !important;
+  display: block !important;
+}
 /* =====================================================================
    晋江段评 (jj-duanping) — 插件界面 · Ins 风格
    白卡 / 细分割线 / 圆角 / Instagram 品牌渐变
