@@ -735,8 +735,10 @@
 .dp-preview-tools {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
     flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 #dp-btn-night {
     border-radius: 999px;

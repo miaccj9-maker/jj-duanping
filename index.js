@@ -3078,11 +3078,7 @@ function injectShell() {
         <div class="dp-sec-title dp-collapse-title" id="dp-bg-collapse-title" style="cursor:pointer;user-select:none;">背景图专属设置 ▾</div><div class="dp-bg-collapse-wrap" id="dp-bg-collapse-wrap"><div class="dp-row dp-bg-block" id="dp-bg-block">
           <div class="dp-field dp-grow">
             <label>背景图链接</label>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <input id="dp-set-bg" type="text" placeholder="粘贴图片链接，或点右侧上传">
-              <button type="button" id="dp-btn-bgfile" class="dp-btn dp-btn-sm">上传图片</button>
-              <button type="button" id="dp-btn-bgclear" class="dp-btn dp-btn-sm">清除背景</button>
-            </div>
+            <input id="dp-set-bg" type="text" placeholder="粘贴图片链接（上传/纯色用预览上方按钮）" style="width:100%">
           </div>
         </div>
         <div class="dp-row dp-bg-block" id="dp-bg-block2">
@@ -4720,33 +4716,49 @@ function openArchiveModal() {
 
 /** 恢复存档：填充原文/评论/模板/高级设置并重新渲染 */
 async function restoreArchive(id) {
-    const list = loadArchives();
-    const a = list.find((x) => x.id === id);
-    if (!a) return;
-    const s = getSettings();
-    document.getElementById('dp-quote-input').value = a.quote || '';
-    dp.comments = (a.comments || []).map((c) => ({ ...c }));
-    dp.selection = null;
-    if (a.templateId) s.activeTemplateId = a.templateId;
-    if (a.bookTitle !== undefined) s.bookTitle = a.bookTitle;
-    if (a.chapterText !== undefined) s.chapterText = a.chapterText;
-    if (a.watermarkText !== undefined) s.watermarkText = a.watermarkText;
-    if (a.quoteSize) s.quoteSize = a.quoteSize;
-    if (a.quoteLh) s.quoteLh = a.quoteLh;
-    if (a.quoteLs !== undefined) s.quoteLs = a.quoteLs;
-    if (a.cardWidth !== undefined) s.cardWidth = a.cardWidth;
-    if (a.captureEngine) s.captureEngine = a.captureEngine;
-    if (a.nightMode !== undefined) s.nightMode = !!a.nightMode;
-    if (a.stickers !== undefined) s.stickers = (a.stickers || []).map((x) => ({ ...x }));
-    saveSettingsDebounced();
-    document.getElementById('dp-archive-modal').style.display = 'none';
-    await populateCharacterSelect();
-    await refreshTemplateSelect();
-    if (typeof syncNightBtn === 'function') syncNightBtn();
-    if (typeof syncWidthSlider === 'function') syncWidthSlider();
-    await renderCommentList();
-    await renderCard();
-    toast('success', '存档已恢复');
+    try {
+        const list = loadArchives();
+        const a = list.find((x) => x.id === id);
+        if (!a) return;
+        const s = getSettings();
+        const qi = document.getElementById('dp-quote-input');
+        if (qi) qi.value = a.quote || '';
+        dp.comments = (a.comments || []).map((c) => ({ ...c }));
+        dp.selection = null;
+        if (a.templateId) s.activeTemplateId = a.templateId;
+        if (a.bookTitle !== undefined) s.bookTitle = a.bookTitle;
+        if (a.chapterText !== undefined) s.chapterText = a.chapterText;
+        if (a.watermarkText !== undefined) s.watermarkText = a.watermarkText;
+        if (a.quoteSize) s.quoteSize = a.quoteSize;
+        if (a.quoteLh) s.quoteLh = a.quoteLh;
+        if (a.quoteLs !== undefined) s.quoteLs = a.quoteLs;
+        if (a.cardWidth !== undefined) s.cardWidth = a.cardWidth;
+        if (a.captureEngine) s.captureEngine = a.captureEngine;
+        if (a.nightMode !== undefined) s.nightMode = !!a.nightMode;
+        if (a.stickers !== undefined) s.stickers = (a.stickers || []).map((x) => ({ ...x }));
+        saveSettingsDebounced();
+        // 同步设置面板输入框
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+        setVal('dp-set-title', s.bookTitle);
+        setVal('dp-set-chapter', s.chapterText);
+        setVal('dp-set-watermark', s.watermarkText);
+        setVal('dp-set-qsize', s.quoteSize);
+        setVal('dp-set-qlh', s.quoteLh);
+        setVal('dp-set-qls', s.quoteLs);
+        setVal('dp-set-width', s.cardWidth || '');
+        const modal = document.getElementById('dp-archive-modal');
+        if (modal) modal.style.display = 'none';
+        if (typeof populateCharacterSelect === 'function') await populateCharacterSelect();
+        if (typeof refreshTemplateSelect === 'function') await refreshTemplateSelect();
+        if (typeof syncNightBtn === 'function') syncNightBtn();
+        if (typeof syncWidthSlider === 'function') syncWidthSlider();
+        await renderCommentList();
+        await renderCard();
+        toast('success', '存档已恢复');
+    } catch (e) {
+        console.error('restoreArchive error:', e);
+        toast('error', '恢复失败：' + e.message);
+    }
 }
 
 /** 导出全部存档为 JSON 文件 */
