@@ -1449,7 +1449,7 @@ async function renderCard() {
     const commentCss = await resolveTemplateComments(settings.activeTemplateId);
     const tplNight = settings.nightMode ? await resolveTemplateNight(settings.activeTemplateId) : '';
     // 拍立得模板：强制硬编码 CSS
-    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:14px 14px 56px 14px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:66px;right:44px;z-index:3;text-align:right;pointer-events:none;}.be-card.be-custom .be-name{font-size:11px;color:rgba(255,255,255,.75);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-date{font-size:10px;color:rgba(255,255,255,.5);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-quote{display:block;margin:0;padding:18px 16px 48px 16px;background:#1a1a1a;color:#f5f5f5;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:0 15%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:16px;color:#2a2a2a;font-weight:600;cursor:pointer;text-align:center;width:100%;line-height:1.25;}`;
+    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:14px 14px 56px 14px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:66px;right:44px;z-index:3;text-align:right;pointer-events:none;}.be-card.be-custom .be-name{font-size:11px;color:rgba(0,0,0,.62);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-date{font-size:10px;color:rgba(0,0,0,.45);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-quote{display:block;margin:0;padding:18px 16px 48px 16px;background:#1a1a1a;color:#f5f5f5;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:0 15%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:16px;color:#2a2a2a;font-weight:600;cursor:pointer;text-align:center;width:100%;line-height:1.25;}`;
     const POLAROID_NIGHT_CSS = `.be-card.be-custom{background:#1a1a1a!important;box-shadow:0 4px 16px rgba(0,0,0,.6)!important;}.be-card.be-custom .be-quote{background:#2a2a2a!important;color:#e8e8e8!important;}.be-card.be-custom .be-source .title{color:#f0f0f0!important;}.be-card.be-custom .be-name{color:rgba(255,255,255,.85)!important;}.be-card.be-custom .be-date{color:rgba(255,255,255,.6)!important;}`;
     let finalCss = css;
     let finalNight = tplNight;
@@ -3067,7 +3067,7 @@ function injectShell() {
           <div class="dp-cb-row">
             <div id="dp-brush-colors" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;"></div>
             <input type="color" id="dp-brush-color" value="#1a1a1a" title="自定义颜色" style="width:32px;height:28px;border:1px solid #ddd;border-radius:6px;cursor:pointer;padding:0;">
-            <button type="button" id="dp-brush-clear" class="dp-btn dp-btn-sm dp-btn-danger">清除</button>
+            <button type="button" id="dp-brush-undo" class="dp-btn dp-btn-sm">撤销</button><button type="button" id="dp-brush-clear" class="dp-btn dp-btn-sm dp-btn-danger">清除</button>
             <button type="button" id="dp-brush-done" class="dp-btn dp-btn-sm">✓ 完成</button>
           </div>
         </div>
@@ -3078,7 +3078,7 @@ function injectShell() {
             <button type="button" class="dp-mosaic-t dp-btn dp-btn-sm" data-m="blur">模糊</button>
             <button type="button" class="dp-mosaic-t dp-btn dp-btn-sm" data-m="solid">纯色</button>
             <span>粗细：<input type="range" id="dp-mosaic-size" min="4" max="50" value="14" style="width:80px;vertical-align:middle"></span>
-            <button type="button" id="dp-mosaic-clear" class="dp-btn dp-btn-sm dp-btn-danger">清空</button>
+            <button type="button" id="dp-mosaic-undo" class="dp-btn dp-btn-sm">撤销</button><button type="button" id="dp-mosaic-clear" class="dp-btn dp-btn-sm dp-btn-danger">清空</button>
             <button type="button" id="dp-mosaic-done" class="dp-btn dp-btn-sm">✓ 完成</button>
           </div>
         </div>
@@ -3384,7 +3384,7 @@ function injectShell() {
     // ===== 画笔涂鸦（内嵌工具条，ios备忘录风格） =====
     const brushBtn = document.getElementById('dp-btn-brush');
     const brushBar = document.getElementById('dp-brush-bar');
-    let brushOn=false, brushCanvas=null, brushCtx=null;
+    let brushOn=false, brushCanvas=null, brushCtx=null, drawUndoStack=[];
     const brushState={color:'#1a1a1a', type:'pen', size:3};
     (function(){
       var box=document.getElementById('dp-brush-colors');
@@ -3405,7 +3405,7 @@ function injectShell() {
       if(!wrap)return;
       // 每次都删旧建新，确保干净
       var oldCv=idoc.getElementById("dp-draw-canvas");
-      if(oldCv) oldCv.remove();
+      var oldImg=null,oldStack=drawUndoStack; if(oldCv){ try{ oldImg={w:oldCv.width,h:oldCv.height,data:oldCv.getContext("2d").getImageData(0,0,oldCv.width,oldCv.height)}; }catch(e){} oldCv.remove(); } else { oldStack=null; }
       var cv=idoc.createElement("canvas");
       cv.id="dp-draw-canvas";
       if(getComputedStyle(wrap).position==="static") wrap.style.position="relative";
@@ -3417,7 +3417,7 @@ function injectShell() {
       wrap.appendChild(cv);
       var ctx=cv.getContext("2d");
       ctx.scale(dpr,dpr);
-      brushCanvas=cv; brushCtx=ctx;
+      brushCanvas=cv; brushCtx=ctx; if(oldImg&&oldImg.w===cv.width&&oldImg.h===cv.height){ try{ ctx.putImageData(oldImg.data,0,0); drawUndoStack=oldStack||[]; }catch(e){ drawUndoStack=[]; } } else { drawUndoStack=[]; }
       var drawing=false,lastX=0,lastY=0;
       function pos(e){var r=cv.getBoundingClientRect();var p=e.touches?e.touches[0]:e;var ratio=(frame._scaleRatio||1);return{x:(p.clientX-r.left)/ratio,y:(p.clientY-r.top)/ratio};}
       function applyStyle(){
@@ -3434,7 +3434,7 @@ function injectShell() {
           else if(t==="water"){ctx.lineWidth=s*4;ctx.globalAlpha=0.25;}
         }
       }
-      cv.onmousedown=cv.ontouchstart=function(e){e.preventDefault();e.stopPropagation();drawing=true;applyStyle();var p=pos(e);lastX=p.x;lastY=p.y;if(brushState.type==="mosaic"){mosaicDot(p.x,p.y);}else{ctx.beginPath();ctx.arc(p.x,p.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}};
+      cv.onmousedown=cv.ontouchstart=function(e){e.preventDefault();e.stopPropagation();drawing=true;try{if(drawUndoStack.length>=30)drawUndoStack.shift();drawUndoStack.push(ctx.getImageData(0,0,cv.width,cv.height));}catch(_){}applyStyle();var p=pos(e);lastX=p.x;lastY=p.y;if(brushState.type==="mosaic"){mosaicDot(p.x,p.y);}else{ctx.beginPath();ctx.arc(p.x,p.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}};
       cv.onmousemove=cv.ontouchmove=function(e){e.preventDefault();var p=pos(e);if(brushOn||mosaicOn&&'ontouchstart'in window){}if(!drawing)return;if(brushState.type==="mosaic"){var dist=Math.hypot(p.x-lastX,p.y-lastY);var step=Math.max(1,mosaicSize/4);var n=Math.max(1,Math.floor(dist/step));for(var i=1;i<=n;i++){var t=i/n;mosaicDot(lastX+(p.x-lastX)*t,lastY+(p.y-lastY)*t);}}else{ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();}lastX=p.x;lastY=p.y;};
       cv.onmouseup=cv.onmouseleave=cv.ontouchend=function(){drawing=false;};
     }
@@ -3455,6 +3455,7 @@ function injectShell() {
       var sz=document.getElementById('dp-brush-size'); if(sz) sz.addEventListener('input',function(e){ brushState.size=parseInt(e.target.value)||3; });
       var col=document.getElementById('dp-brush-color'); if(col) col.addEventListener('input',function(e){ brushState.color=e.target.value; });
       var cl=document.getElementById('dp-brush-clear'); if(cl) cl.addEventListener('click',function(){ if(brushCtx&&brushCanvas) brushCtx.clearRect(0,0,brushCanvas.width,brushCanvas.height); });
+      var un=document.getElementById('dp-brush-undo'); if(un) un.addEventListener('click',function(){ if(brushCtx&&brushCanvas&&drawUndoStack.length){try{brushCtx.putImageData(drawUndoStack.pop(),0,0);}catch(_){}} });
       var dn=document.getElementById('dp-brush-done'); if(dn) dn.addEventListener('click',function(){ toggleBrush(false); });
     }
     // ===== 马赛克（涂抹式）+ 放大镜（防手指遮挡） =====
@@ -3482,32 +3483,35 @@ function injectShell() {
       brushCtx.save();
       brushCtx.globalCompositeOperation = "source-over";
       if (mosaicStyle === "blur") {
-        // 模糊：半透明灰圆
         brushCtx.fillStyle = "rgba(100,100,100,0.45)";
         brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
       } else if (mosaicStyle === "solid") {
-        // 纯色：实心深灰圆
-        brushCtx.fillStyle = "#666";
-        brushCtx.beginPath(); brushCtx.arc(cx, cy, s/2, 0, Math.PI*2); brushCtx.fill();
-      } else if (mosaicStyle === "pixel") {
-        // 像素：小方块棋盘格
-        var ps = Math.max(3, Math.floor(s/4));
-        var sx = Math.floor((cx-s/2)/ps)*ps, sy = Math.floor((cy-s/2)/ps)*ps;
-        for (var y=sy; y<cy+s/2; y+=ps) {
-          for (var x=sx; x<cx+s/2; x+=ps) {
-            var idx = Math.round(x/ps)+Math.round(y/ps);
-            brushCtx.fillStyle = (idx%2===0) ? "#888" : "#aaa";
-            brushCtx.fillRect(x, y, ps, ps);
-          }
-        }
+        var sc = Math.max(6, Math.floor(s/1.5));
+        var sx0 = Math.floor((cx-s/2)/sc)*sc, sy0 = Math.floor((cy-s/2)/sc)*sc;
+        brushCtx.fillStyle = (brushState && brushState.color) ? brushState.color : "#666";
+        brushCtx.fillRect(sx0, sy0, sc*2, sc*2);
       } else {
-        // 方块：大块灰色方块
-        var ps2 = Math.max(6, Math.floor(s/1.5));
-        var sx2 = Math.floor((cx-s/2)/ps2)*ps2, sy2 = Math.floor((cy-s/2)/ps2)*ps2;
-        brushCtx.fillStyle = "#999";
-        for (var y=sy2; y<cy+s/2; y+=ps2) {
-          for (var x=sx2; x<cx+s/2; x+=ps2) {
-            brushCtx.fillRect(x, y, ps2, ps2);
+        var cell = (mosaicStyle === "pixel") ? Math.max(3, Math.floor(s/4)) : Math.max(6, Math.floor(s/1.5));
+        var x0 = Math.floor((cx-s/2)/cell)*cell;
+        var y0 = Math.floor((cy-s/2)/cell)*cell;
+        var sctx = (mosaicSrcReady && mosaicSrcCv) ? mosaicSrcCv.getContext("2d") : null;
+        for (var yy=y0; yy<cy+s/2; yy+=cell) {
+          for (var xx=x0; xx<cx+s/2; xx+=cell) {
+            var col = null;
+            if (sctx) {
+              try {
+                var px = Math.min(mosaicSrcCv.width-1, Math.max(0, Math.floor(xx+cell/2)));
+                var py = Math.min(mosaicSrcCv.height-1, Math.max(0, Math.floor(yy+cell/2)));
+                var d = sctx.getImageData(px, py, 1, 1).data;
+                col = "rgb("+d[0]+","+d[1]+","+d[2]+")";
+              } catch(err) { col = null; }
+            }
+            if (!col) {
+              var idx = Math.round(xx/cell)+Math.round(yy/cell);
+              col = (idx%2===0) ? "#9a9a9a" : "#858585";
+            }
+            brushCtx.fillStyle = col;
+            brushCtx.fillRect(xx, yy, cell, cell);
           }
         }
       }
@@ -3521,6 +3525,7 @@ function injectShell() {
         // 互斥：开马赛克时关画笔
         if(brushOn){ brushOn=false; if(brushBar)brushBar.style.display='none'; if(brushBtn){brushBtn.style.background='';brushBtn.style.color='';} }
         setupBrushCanvas();
+        setTimeout(initMosaicSource, 60);
         brushState.type = 'mosaic';
       } else {
         
@@ -3534,6 +3539,7 @@ function injectShell() {
       document.getElementById('dp-mosaic-clear').addEventListener('click', function(){
         if (brushCtx && brushCanvas) brushCtx.clearRect(0,0,brushCanvas.width,brushCanvas.height);
       });
+      var mun=document.getElementById('dp-mosaic-undo'); if(mun) mun.addEventListener('click', function(){ if(brushCtx&&brushCanvas&&drawUndoStack.length){try{brushCtx.putImageData(drawUndoStack.pop(),0,0);}catch(_){}} });
       document.getElementById('dp-mosaic-done').addEventListener('click', function(){ toggleMosaic(false); });
     }
     // launcher 可拖动 + 记忆位置
