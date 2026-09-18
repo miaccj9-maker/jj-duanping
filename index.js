@@ -1515,7 +1515,7 @@ async function renderCard() {
         // 综合缩放：宽度变宽字号变大、变窄变小；高度(卡片总高)变低时同步缩小，取较紧一维避免溢出
         const baseTotalH = 360; // 340宽+默认正文280：总高=16+280+64，上左右线条16px底部白边64px
         const totalH = ((cardH > 0 ? cardH : 280) + 16) + 64;
-        const ratio = Math.min(wRatio, totalH / baseTotalH);
+        const ratio = wRatio; // 字号宽度主导：变宽变大、变窄变小，不被高度拖累
         titleSize = Math.max(9, Math.round(titleSize * ratio));
         // 底部标题框高度固定=卡片总高75%，不随宽度比例缩放
         nameSize = Math.max(10, Math.round(nameSize * ratio));
