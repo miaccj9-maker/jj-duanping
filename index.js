@@ -1137,7 +1137,7 @@ function buildCardHtml({
     beName = '',
 }) {
     const avatarBlock = avatarUrl
-        ? `<div class="be-char-avatar" style="width:42px;height:42px;background-image:url("${esc(avatarUrl)}");background-size:cover;background-position:center;border-radius:4px;flex-shrink:0"></div>`
+        ? `<img class="be-char-avatar" src="${esc(avatarUrl)}" width="42" height="42" style="width:42px;height:42px;object-fit:cover;display:block;border-radius:4px;flex-shrink:0" crossorigin="anonymous">`
         : `<div class="be-char-avatar"></div>`;
     return `
     <div class="be-card be-custom" style="--be-quote-size:${quoteSize}px;--be-quote-lh:${quoteLh};--be-quote-ls:${quoteLs}em">
@@ -2705,7 +2705,7 @@ async function downloadCardImage() {
                 await ensureHtml2canvas(frame);
                 try { if (frame.contentDocument.fonts && frame.contentDocument.fonts.ready) await frame.contentDocument.fonts.ready; } catch { /* ignore */ }
                 const canvas = await frame.contentWindow.html2canvas(card, {
-                    scale: 4,
+                    scale: 6,
                     useCORS: true,
                     backgroundColor: null,
                     width: card.scrollWidth,
@@ -2749,7 +2749,7 @@ async function downloadCardImage() {
                 await ensureHtml2canvas(frame);
                 try { if (frame.contentDocument) frame.contentDocument.querySelectorAll('.dp-collage-word').forEach((w) => { const m = (w.className || '').match(/dp-paper-(\w+)/); if (m && paperDl[m[1]] !== undefined) w.style.backgroundImage = paperDl[m[1]]; }); } catch { /* ignore */ }
                 try { if (frame.contentDocument.fonts && frame.contentDocument.fonts.ready) await frame.contentDocument.fonts.ready; } catch { /* ignore */ }
-                const canvas2 = await frame.contentWindow.html2canvas(card, { scale: 4, useCORS: true, backgroundColor: null, width: card.scrollWidth, height: card.scrollHeight, windowWidth: card.scrollWidth, logging: false });
+                const canvas2 = await frame.contentWindow.html2canvas(card, { scale: 6, useCORS: true, backgroundColor: null, width: card.scrollWidth, height: card.scrollHeight, windowWidth: card.scrollWidth, logging: false });
                 const blob2 = await new Promise((res) => canvas2.toBlob(res, 'image/png'));
                 if (blob2) { downloadBlob(blob2, filename); toast('warning', 'SVG 渲染受限，已用兼容模式下载'); return; }
             } catch (e2) { /* fallthrough */ }
