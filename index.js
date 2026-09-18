@@ -2951,7 +2951,7 @@ function injectShell() {
               <span id="dp-width-val" class="dp-width-val">跟随模板</span>
             </div>
             <button type="button" id="dp-btn-sticker" class="dp-btn dp-btn-sm">贴纸</button>
-            <button type="button" id="dp-btn-brush" class="dp-btn dp-btn-sm">画笔</button>
+            <button type="button" id="dp-btn-brush" class="dp-btn dp-btn-sm">画笔</button><button type="button" id="dp-btn-text" class="dp-btn dp-btn-sm">文本</button>
             <button type="button" id="dp-btn-mosaic" class="dp-btn dp-btn-sm">马赛克</button>
             <button type="button" id="dp-btn-collage-main" class="dp-btn dp-btn-sm">拼贴诗</button>
             <button type="button" id="dp-btn-night" class="dp-btn dp-btn-sm">夜间</button>
@@ -3489,6 +3489,51 @@ function injectShell() {
                 if (id === 'dp-modal') closeCollageEditor(false);
             }
         });
+    });
+
+    // ===== 文本功能（可拖动可编辑文字） =====
+    const textBtn = document.getElementById('dp-btn-text');
+    let textOn = false;
+    function addTextToCard() {
+        const frame = document.getElementById('dp-frame');
+        if (!frame || !frame.contentDocument) return;
+        const wrap = frame.contentDocument.querySelector('.dp-card-wrap');
+        if (!wrap) return;
+        const t = frame.contentDocument.createElement('div');
+        t.className = 'dp-text-item';
+        t.contentEditable = 'true';
+        t.textContent = '双击编辑文字';
+        t.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:8px 12px;min-width:60px;min-height:32px;background:rgba(255,255,255,0.9);color:#333;font-size:20px;font-family:inherit;cursor:move;border-radius:4px;outline:none;z-index:99998;user-select:none;';
+        wrap.appendChild(t);
+        // 拖动
+        let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+        t.addEventListener('mousedown', function(e) {
+            if (e.target === t && document.activeElement !== t) {
+                dragging = true; sx = e.clientX; sy = e.clientY;
+                const rect = t.getBoundingClientRect();
+                const wrapRect = wrap.getBoundingClientRect();
+                ox = rect.left - wrapRect.left; oy = rect.top - wrapRect.top;
+                t.style.transform = 'none';
+                t.style.left = ox + 'px'; t.style.top = oy + 'px';
+                e.preventDefault();
+            }
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!dragging) return;
+            t.style.left = (ox + e.clientX - sx) + 'px';
+            t.style.top = (oy + e.clientY - sy) + 'px';
+        });
+        document.addEventListener('mouseup', function() { dragging = false; });
+        // 双击编辑
+        t.addEventListener('dblclick', function() { t.focus(); document.execCommand('selectAll', false, null); });
+        // 失焦时如果为空则删除
+        t.addEventListener('blur', function() { if (!t.textContent.trim()) t.remove(); });
+    }
+    if (textBtn) textBtn.addEventListener('click', function() {
+        textOn = !textOn;
+        textBtn.style.background = textOn ? '#1a1a1a' : '';
+        textBtn.style.color = textOn ? '#fff' : '';
+        if (textOn) addTextToCard();
     });
 
     // 主面板事件
@@ -5643,7 +5688,7 @@ function buildCollageHtml(words, W, H) {
         const av = w.av || 'middle';
         const jc = ah === 'left' ? 'flex-start' : ah === 'right' ? 'flex-end' : 'center';
         const ai = av === 'top' ? 'flex-start' : av === 'bottom' ? 'flex-end' : 'center';
-        return `<div class="dp-collage-word dp-paper-${w.paper || 'plain'}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;width:${ww.toFixed(3)}%;height:${hh.toFixed(3)}%;transform:rotate(${rot}deg);background-color:${w.paper === 'custom' ? 'transparent' : esc(w.bg || '#f5eedd')};background-image:${w.paper === 'custom' ? (getSettings().collagePaperImg ? `url('${getSettings().collagePaperImg}')` : '') : (PAPER_IMG[w.paper || 'plain'] || '')};background-size:${w.paper === 'xuan' ? '6px 6px' : '100% 100%'};color:${esc(w.fg || '#333333')};border-radius:${collageShapeCss(w.shape)};font-size:${Math.max(8, Number(w.size) || 20)}px;font-family:${stack};"><span style="display:flex;align-items:${ai};justify-content:${jc};width:100%;height:100%;padding:6px;box-sizing:border-box;">${esc(w.text || '')}</span><i class="dp-collage-resize" title="拖拽裁剪大小"></i></div>`;
+        return `<div class="dp-collage-word dp-paper-${w.paper || 'plain'}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;width:${ww.toFixed(3)}%;height:${hh.toFixed(3)}%;transform:rotate(${rot}deg);background-color:${w.paper === 'custom' ? 'transparent' : esc(w.bg || '#f5eedd')};background-image:${w.paper === 'custom' ? (getSettings().collagePaperImg ? `url('${getSettings().collagePaperImg}')` : '') : (PAPER_IMG[w.paper || 'plain'] || '')};background-size:${w.paper === 'xuan' ? '6px 6px' : '100% 100%'};color:${esc(w.fg || '#333333')};border-radius:${collageShapeCss(w.shape)};font-size:${Math.max(8, Number(w.size) || 20)}px;font-family:${stack};"><span style="display:flex;align-items:${ai};justify-content:${jc};width:100%;height:100%;padding:${w.paper === 'none' ? '0' : '6px'};box-sizing:border-box;">${esc(w.text || '')}</span><i class="dp-collage-resize" title="拖拽裁剪大小"></i></div>`;
     }).join('');
 }
 
