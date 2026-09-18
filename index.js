@@ -3822,7 +3822,7 @@ function injectShell() {
     // 存档卡片
     document.getElementById('dp-btn-archive').addEventListener('click', saveCurrentArchive);
     document.getElementById('dp-btn-archive-list').addEventListener('click', openArchiveModal);
-    document.getElementById('dp-archive-export').addEventListener('click', exportArchives);
+    const archExportBtn = document.getElementById('dp-archive-export'); if (archExportBtn) archExportBtn.addEventListener('click', exportArchives);
     document.getElementById('dp-archive-close').addEventListener('click', () => {
         document.getElementById('dp-archive-modal').style.display = 'none';
     });
