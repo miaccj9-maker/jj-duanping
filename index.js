@@ -2792,32 +2792,47 @@ function getSelectionContext(sel) {
 
 function showFloatButton(rect) {
     const btn = document.getElementById('dp-float-btn');
+    const saveBtn = document.getElementById('dp-float-save');
     if (!btn) return;
     const w = btn.offsetWidth || 86;
     const h = btn.offsetHeight || 40;
+    const sw = saveBtn ? (saveBtn.offsetWidth || 86) : 86;
     const isMobile = window.innerWidth < 768;
     let left, top;
     if (isMobile) {
-        // 手机端：放选区上方，上方放不下放下方
-        left = rect.left + rect.width / 2 - w / 2;
+        // 手机端：两个按钮并排放选区上方
+        const totalW = w + sw + 6;
+        left = rect.left + rect.width / 2 - totalW / 2;
         top = rect.top - h - 10;
         if (top < 8) top = rect.bottom + 10;
+        btn.style.left = left + 'px';
+        if (saveBtn) saveBtn.style.left = (left + w + 6) + 'px';
     } else {
-        // 电脑端：放选区右侧，右侧放不下放左侧
+        // 电脑端：段评放右侧，存档放段评右边
         left = rect.right + 10;
         top = rect.top + rect.height / 2 - h / 2;
-        if (left + w > window.innerWidth - 8) left = rect.left - w - 10;
+        if (left + w + sw + 6 > window.innerWidth - 8) {
+            // 放不下就放左侧
+            left = rect.left - w - sw - 16;
+            btn.style.left = (left + sw + 6) + 'px';
+            if (saveBtn) saveBtn.style.left = left + 'px';
+        } else {
+            btn.style.left = left + 'px';
+            if (saveBtn) saveBtn.style.left = (left + w + 6) + 'px';
+        }
     }
-    left = Math.min(Math.max(8, left), window.innerWidth - w - 8);
     top = Math.min(Math.max(8, top), window.innerHeight - h - 8);
-    btn.style.left = left + 'px';
     btn.style.top = top + 'px';
+    if (saveBtn) saveBtn.style.top = top + 'px';
     btn.style.display = 'flex';
+    if (saveBtn) saveBtn.style.display = 'flex';
 }
 
 function hideFloatButton() {
     const btn = document.getElementById('dp-float-btn');
+    const saveBtn = document.getElementById('dp-float-save');
     if (btn) btn.style.display = 'none';
+    if (saveBtn) saveBtn.style.display = 'none';
 }
 
 function onSelectionChange() {
@@ -3059,7 +3074,7 @@ function injectShell() {
           </div>
         </div>
 
-        <div class="dp-row dp-bg-block" id="dp-bg-block">
+        <div class="dp-sec-title dp-collapse-title" id="dp-bg-collapse-title" style="cursor:pointer;user-select:none;">背景图专属设置 ▾</div><div class="dp-bg-collapse-wrap" id="dp-bg-collapse-wrap"><div class="dp-row dp-bg-block" id="dp-bg-block">
           <div class="dp-field dp-grow">
             <label>背景图（仅「背景图」模板生效；本地上传 = 下载高清无跨域）</label>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -3118,10 +3133,10 @@ function injectShell() {
       </div>
 
     <div class="dp-modal-foot">
-      <button type="button" id="dp-btn-copy" class="dp-btn">📋 复制段评</button>
-      <button type="button" id="dp-btn-archive" class="dp-btn">💾 存档卡片</button>
-      <button type="button" id="dp-btn-archive-list" class="dp-btn">🗂 存档列表</button>
-      <button type="button" id="dp-btn-download" class="dp-btn dp-btn-primary">⬇ 下载图片</button>
+      <button type="button" id="dp-btn-copy" class="dp-btn">复制</button>
+      <button type="button" id="dp-btn-archive" class="dp-btn">存档</button>
+      <button type="button" id="dp-btn-archive-list" class="dp-btn">列表</button>
+      <button type="button" id="dp-btn-download" class="dp-btn dp-btn-primary">下载</button>
     </div>
   </div>
 </div>
@@ -3208,14 +3223,14 @@ function injectShell() {
 <div id="dp-archive-modal" class="dp-modal-mask" style="display:none;">
   <div class="dp-modal-panel" style="width:560px;">
     <div class="dp-modal-head">
-      <div class="dp-modal-title">存档卡片 <span class="dp-sub">本机保存的段评卡片，可恢复/删除/导出</span></div>
+      <div class="dp-modal-title">存档卡片 <span class="dp-sub">本机保存的段评卡片，可恢复/删除</span></div>
       <button type="button" class="dp-btn dp-btn-ghost dp-close" data-close="dp-archive-modal">✕</button>
     </div>
     <div class="dp-body">
       <div id="dp-archive-list" class="dp-comment-list"></div>
     </div>
     <div class="dp-modal-foot">
-      <button type="button" id="dp-archive-export" class="dp-btn">导出全部 JSON</button>
+      
       <button type="button" id="dp-archive-close" class="dp-btn dp-btn-primary">关闭</button>
     </div>
   </div>
@@ -4620,6 +4635,7 @@ function saveCurrentArchive() {
         cardWidth: s.cardWidth || 0,
         captureEngine: s.captureEngine || 'auto',
         nightMode: !!s.nightMode,
+        charName: (typeof char !== 'undefined' && char.name) ? char.name : '',
         stickers: (s.stickers || []).map((x) => ({ ...x })),
     };
     const list = loadArchives();
@@ -4643,7 +4659,7 @@ function renderArchiveList() {
     if (!box) return;
     const list = loadArchives();
     if (!list.length) {
-        box.innerHTML = '<div class="dp-comment-empty">还没有存档卡片。生成段评后点「💾 存档卡片」即可保存。</div>';
+        box.innerHTML = '<div class="dp-comment-empty">还没有存档卡片。生成段评后点「存档」即可保存。</div>';
         return;
     }
     box.innerHTML = list.map((a) => {
@@ -4651,7 +4667,7 @@ function renderArchiveList() {
         const n = (a.comments || []).length;
         return `<div class="dp-arch-row">
           <div class="dp-arch-info">
-            <div class="dp-arch-time">${esc(fmtTime(a.time))} · ${n} 条评论</div>
+            <div class="dp-arch-time">${esc(fmtTime(a.time))} · ${a.charName ? esc(a.charName) + ' · ' : ''}${n} 条评论</div>
             <div class="dp-arch-quote">${esc(quote)}${(a.quote || '').length > 26 ? '…' : ''}</div>
           </div>
           <div class="dp-arch-actions">
