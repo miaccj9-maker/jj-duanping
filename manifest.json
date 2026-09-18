@@ -5,6 +5,6 @@
   "author": "miaccj9-maker",
   "description": "模仿晋江文学城「段评」功能：长按/拖选聊天段落 → 让其他角色（或当前角色）评级所选片段 → 生成段评卡片，支持自定义 CSS 模板与卡片图片下载。支持自填 API 调取模型、角色人设贴合与自我意识、图片宽度调节、角色英文 @ID。",
   "license": "MIT",
-  "js": "index.js?v=21949",
+  "js": "index.js?v=21950",
   "css": "style.css?v=21890"
 }
