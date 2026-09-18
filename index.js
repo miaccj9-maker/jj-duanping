@@ -3499,11 +3499,11 @@ function injectShell() {
     }
     // launcher 可拖动 + 记忆位置
     (function(){
-      var saved=null; try{ saved=JSON.parse(localStorage.getItem('dp-launcher-pos')||'null'); }catch(e){}
-      if(saved && typeof saved.x==='number'){
-        launcher.style.left=saved.x+'px'; launcher.style.top=saved.y+'px';
-        launcher.style.right='auto'; launcher.style.bottom='auto';
-      }
+      // 清除旧位置，恢复默认（右下角、输入框上方）
+      try{ localStorage.removeItem('dp-launcher-pos'); }catch(e){}
+      launcher.style.right='18px'; launcher.style.bottom='130px';
+      launcher.style.left=''; launcher.style.top='';
+      var saved=null;
       var sx=0,sy=0,ox=0,oy=0,dragging=false,moved=false;
       launcher.addEventListener('pointerdown',function(e){
         dragging=true; moved=false;
