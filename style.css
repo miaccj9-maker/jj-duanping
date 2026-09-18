@@ -34,7 +34,7 @@
 }
 
 /* ---------- 浮动按钮 / 常驻入口 ---------- */
-#dp-float-btn, #dp-launcher {
+#dp-float-btn, #dp-float-save, #dp-launcher {
     display: flex;
     align-items: center;
     gap: 7px;
@@ -48,7 +48,7 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
     transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
 }
-#dp-float-btn {
+#dp-float-btn, #dp-float-save {
     position: fixed;
     z-index: 2147483646;
     padding: 8px 15px;
@@ -58,14 +58,19 @@
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
-#dp-float-btn:hover, #dp-launcher:hover {
+#dp-float-btn:hover, #dp-float-save:hover, #dp-launcher:hover {
     transform: translateY(-2px) scale(1.03);
     filter: brightness(1.06);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
-#dp-float-btn .dp-fb-icon, #dp-launcher .dp-launcher-icon {
+#dp-float-btn .dp-fb-icon, #dp-float-save .dp-fb-icon, #dp-launcher .dp-launcher-icon {
     font-size: 15px;
     line-height: 1;
+}
+#dp-float-save {
+    background: #ffffff;
+    color: #1a1a1a;
+    border: 1px solid rgba(0,0,0,0.12);
 }
 #dp-launcher {
     position: fixed;
@@ -939,7 +944,7 @@
         right: 14px;
         padding: 12px 18px;
     }
-    #dp-float-btn {
+    #dp-float-btn, #dp-float-save {
         font-size: 12px;
         padding: 8px 13px;
         touch-action: manipulation;

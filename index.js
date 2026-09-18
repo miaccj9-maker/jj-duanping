@@ -1449,7 +1449,7 @@ async function renderCard() {
     const commentCss = await resolveTemplateComments(settings.activeTemplateId);
     const tplNight = settings.nightMode ? await resolveTemplateNight(settings.activeTemplateId) : '';
     // 拍立得模板：强制硬编码 CSS
-    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:14px 14px 56px 14px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:66px;right:44px;z-index:3;text-align:right;pointer-events:none;}.be-card.be-custom .be-name{font-size:11px;color:rgba(0,0,0,.62);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-date{font-size:10px;color:rgba(0,0,0,.45);display:block!important;cursor:pointer;pointer-events:auto;}.be-card.be-custom .be-quote{display:block;margin:0;padding:18px 16px 48px 16px;background:#e9e9e7;color:#2b2b2b;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:0 12%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:18px;color:#2a2a2a;font-weight:700;cursor:pointer;text-align:center;width:100%;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}`;
+    const POLAROID_CSS = `.be-card.be-custom{background:#fafafa;padding:14px 14px 56px 14px;box-shadow:0 4px 16px rgba(0,0,0,.18);position:relative;width:340px;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}.be-card.be-custom .be-char-avatar{display:none!important;}.be-card.be-custom .be-source .author{display:none!important;}.be-card.be-custom .be-source .chapter{display:none!important;}.be-card.be-custom .be-quote-orig{display:none!important;}.be-card.be-custom .be-watermark{display:none!important;}.be-card.be-custom .be-comment{display:none!important;}.be-card.be-custom .be-date-cn{display:none!important;}.be-card.be-custom .be-head{position:absolute;bottom:64px;right:22px;z-index:3;text-align:right;pointer-events:none;max-width:64%;white-space:nowrap;}.be-card.be-custom .be-name{font-size:11px;color:rgba(0,0,0,.62);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-date{font-size:10px;color:rgba(0,0,0,.45);display:block!important;cursor:pointer;pointer-events:auto;white-space:nowrap;}.be-card.be-custom .be-quote{display:block;margin:0;padding:18px 16px 48px 16px;background:#e9e9e7;color:#2b2b2b;font-size:15px;line-height:1.65;min-height:280px;box-sizing:border-box;white-space:pre-wrap;word-break:break-word;position:relative;}.be-card.be-custom .be-source{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:0 12%;box-sizing:border-box;}.be-card.be-custom .be-source .title{font-size:18px;color:#2a2a2a;font-weight:700;cursor:pointer;text-align:center;width:100%;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}`;
     const POLAROID_NIGHT_CSS = `.be-card.be-custom{background:#1a1a1a!important;box-shadow:0 4px 16px rgba(0,0,0,.6)!important;}.be-card.be-custom .be-quote{background:#2a2a2a!important;color:#e8e8e8!important;}.be-card.be-custom .be-source .title{color:#f0f0f0!important;}.be-card.be-custom .be-name{color:rgba(255,255,255,.85)!important;}.be-card.be-custom .be-date{color:rgba(255,255,255,.6)!important;}`;
     let finalCss = css;
     let finalNight = tplNight;
@@ -2886,6 +2886,36 @@ function hideFloatButton() {
     if (saveBtn) saveBtn.style.display = 'none';
 }
 
+function quickArchiveText(text) {
+    text = (text || '').trim();
+    if (!text) { toast('warning', '请先选中一段文字'); return false; }
+    const s = getSettings();
+    const arch = {
+        id: 'a_' + Date.now().toString(36) + '_' + Math.floor(Math.random() * 1e6).toString(36),
+        time: new Date().toISOString(),
+        quote: text,
+        comments: [],
+        templateId: s.activeTemplateId,
+        bookTitle: s.bookTitle || '',
+        chapterText: s.chapterText || '',
+        watermarkText: s.watermarkText || '',
+        quoteSize: s.quoteSize ?? 15,
+        quoteLh: s.quoteLh ?? 1.6,
+        quoteLs: s.quoteLs ?? 0,
+        cardWidth: s.cardWidth || 0,
+        cardHeight: s.cardHeight || 0,
+        captureEngine: s.captureEngine || 'auto',
+        nightMode: !!s.nightMode,
+        stickers: (s.stickers || []).map((x) => ({ ...x })),
+        charName: (typeof char !== 'undefined' && char.name) ? char.name : '',
+    };
+    const list = loadArchives();
+    list.unshift(arch);
+    saveArchives(list);
+    toast('success', '已存档');
+    return true;
+}
+
 function onSelectionChange() {
     const sel = window.getSelection();
     const context = getSelectionContext(sel);
@@ -3346,32 +3376,7 @@ function injectShell() {
         e.stopPropagation();
         const sel = window.getSelection();
         const text = sel ? sel.toString().trim() : '';
-        if (!text) { toast('warning', '请先选中一段文字'); return; }
-        const s = getSettings();
-        const arch = {
-            id: 'a_' + Date.now().toString(36) + '_' + Math.floor(Math.random() * 1e6).toString(36),
-            time: new Date().toISOString(),
-            quote: text,
-            comments: [],
-            templateId: s.activeTemplateId,
-            bookTitle: s.bookTitle || '',
-            chapterText: s.chapterText || '',
-            watermarkText: s.watermarkText || '',
-            quoteSize: s.quoteSize ?? 15,
-            quoteLh: s.quoteLh ?? 1.6,
-            quoteLs: s.quoteLs ?? 0,
-            cardWidth: s.cardWidth || 0,
-            cardHeight: s.cardHeight || 0,
-            captureEngine: s.captureEngine || 'auto',
-            nightMode: !!s.nightMode,
-            stickers: (s.stickers || []).map((x) => ({ ...x })),
-            charName: (typeof char !== 'undefined' && char.name) ? char.name : '',
-        };
-        const list = loadArchives();
-        list.unshift(arch);
-        saveArchives(list);
-        hideFloatButton();
-        toast('success', '已存档');
+        if (quickArchiveText(text)) hideFloatButton();
     });
 
 
@@ -3544,39 +3549,36 @@ function injectShell() {
       var mun=document.getElementById('dp-mosaic-undo'); if(mun) mun.addEventListener('click', function(){ if(brushCtx&&brushCanvas&&drawUndoStack.length){try{brushCtx.putImageData(drawUndoStack.pop(),0,0);}catch(_){}} });
       document.getElementById('dp-mosaic-done').addEventListener('click', function(){ toggleMosaic(false); });
     }
-    // launcher 可拖动 + 记忆位置
     (function(){
-      // 清除旧位置，恢复默认（右下角、输入框上方）
+      // 默认固定在右侧、输入框上方；每次加载清除旧的拖动位置，避免跑到中间
       try{ localStorage.removeItem('dp-launcher-pos'); }catch(e){}
       launcher.style.right='18px'; launcher.style.bottom='130px';
       launcher.style.left=''; launcher.style.top='';
-      var saved=null;
-      var sx=0,sy=0,ox=0,oy=0,dragging=false,moved=false;
+      var sx=0,sy=0,ox=0,oy=0,dragging=false,moved=false,switched=false;
       launcher.addEventListener('pointerdown',function(e){
-        dragging=true; moved=false;
+        dragging=true; moved=false; switched=false; launcher._justDragged=false;
         var r=launcher.getBoundingClientRect(); ox=r.left; oy=r.top;
         sx=e.clientX; sy=e.clientY;
         try{ launcher.setPointerCapture(e.pointerId); }catch(err){}
-        launcher.style.right='auto'; launcher.style.bottom='auto';
       });
       launcher.addEventListener('pointermove',function(e){
         if(!dragging)return;
         var dx=e.clientX-sx, dy=e.clientY-sy;
-        if(Math.abs(dx)+Math.abs(dy)>5) moved=true;
+        if(!moved && Math.abs(dx)+Math.abs(dy)>8){ moved=true; }
         if(moved){
+          if(!switched){ switched=true; launcher.style.right='auto'; launcher.style.bottom='auto'; }
           var nx=Math.max(4,Math.min(ox+dx,window.innerWidth-launcher.offsetWidth-4));
-          var ny=Math.max(4,Math.min(oy+dy,window.innerHeight-launcher.offsetHeight-4));
+          var ny=Math.max(4,Math.min(ox+dy,window.innerHeight-launcher.offsetHeight-4));
           launcher.style.left=nx+'px'; launcher.style.top=ny+'px';
         }
       });
-      launcher.addEventListener('pointerup',function(){
+      var endDrag=function(){
+        if(!dragging)return;
         dragging=false;
-        if(moved){
-          launcher._justDragged=true;
-          try{ localStorage.setItem('dp-launcher-pos',JSON.stringify({x:parseInt(launcher.style.left),y:parseInt(launcher.style.top)})); }catch(err){}
-          setTimeout(function(){ launcher._justDragged=false; },50);
-        }
-      });
+        if(moved){ launcher._justDragged=true; }
+      };
+      launcher.addEventListener('pointerup',endDrag);
+      launcher.addEventListener('pointercancel',endDrag);
     })();
 
     // 关闭按钮
@@ -4472,6 +4474,7 @@ function openDpContextMenu(x, y, textEl, existing) {
     };
     if (existing) {
         add('✎ 给选中文字写段评', 'selection', true);
+        add('⤓ 存档选中文字', 'archive');
     } else {
         add('✎ 提取本段写段评', 'extract', true);
     }
@@ -4491,6 +4494,10 @@ async function handleContextAction(action, textEl, existing, x, y) {
     if (action === 'selection') {
         dp.selection = existing;
         await openDuanpingPanel();
+        return;
+    }
+    if (action === 'archive') {
+        if (existing && existing.text) { quickArchiveText(existing.text); hideDpContextMenu(); }
         return;
     }
     if (action === 'extract') {
