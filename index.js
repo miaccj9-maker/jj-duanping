@@ -2795,13 +2795,23 @@ function showFloatButton(rect) {
     if (!btn) return;
     const w = btn.offsetWidth || 86;
     const h = btn.offsetHeight || 40;
-    let left = rect.right + 10;
-    let top = rect.top + rect.height / 2 - h / 2;
-    if (left + w > window.innerWidth - 8) left = rect.left - w - 10;
+    const isMobile = window.innerWidth < 768;
+    let left, top;
+    if (isMobile) {
+        // 手机端：放选区上方，上方放不下放下方
+        left = rect.left + rect.width / 2 - w / 2;
+        top = rect.top - h - 10;
+        if (top < 8) top = rect.bottom + 10;
+    } else {
+        // 电脑端：放选区右侧，右侧放不下放左侧
+        left = rect.right + 10;
+        top = rect.top + rect.height / 2 - h / 2;
+        if (left + w > window.innerWidth - 8) left = rect.left - w - 10;
+    }
     left = Math.min(Math.max(8, left), window.innerWidth - w - 8);
     top = Math.min(Math.max(8, top), window.innerHeight - h - 8);
-    btn.style.left = `${left}px`;
-    btn.style.top = `${top}px`;
+    btn.style.left = left + 'px';
+    btn.style.top = top + 'px';
     btn.style.display = 'flex';
 }
 
