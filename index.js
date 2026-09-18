@@ -1429,7 +1429,7 @@ async function renderCard() {
     // 拍立得模板：直接生成独立 HTML，物理删除头像/作者/章节/原文/水印/中文日期
     const isPolaroidTpl = (settings.activeTemplateId && settings.activeTemplateId.indexOf('拍立得') >= 0);
     if (isPolaroidTpl && !collageCardHtml) {
-        const polaroidTitle = title || '祝好，祝当下祝每一个明天都好';
+        const polaroidTitle = settings.polaroidTitle || '祝好，祝当下祝每一个明天都好';
         const polaroidName = authorName || '';
         const polaroidDate = dateStr();
         const polaroidQuote = quote;
@@ -3694,12 +3694,6 @@ function injectShell() {
     document.getElementById('dp-tpl-select').addEventListener('change', async (e) => {
         const settings = getSettings();
         settings.activeTemplateId = e.target.value;
-        // 拍立得默认标题
-        if ((e.target.value === 'builtin:拍立得' || e.target.value === 'builtin:拍立得夜间') && !settings.bookTitle) {
-            settings.bookTitle = '祝好，祝当下祝每一个明天都好';
-            const titleInput = document.getElementById('dp-set-title');
-            if (titleInput) titleInput.value = settings.bookTitle;
-        }
         saveSettingsDebounced();
         await renderCard();
     });
