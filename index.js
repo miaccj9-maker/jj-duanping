@@ -42,7 +42,7 @@ const extensionFolderPath = (() => {
 
 const DEFAULT_TEMPLATE_ID = 'builtin:晋江段评（默认）';
 const DEFAULT_TEMPLATE_NAME = '晋江段评（默认）';
-const BUILTIN_KEYS = ['小狗日记小票', 'Ins名片', 'X修复版', 'icity日记', '背景图', '朋友圈', '朋友圈纯文字', '朋友圈夜间', '朋友圈纯文字夜间'];
+const BUILTIN_KEYS = ['小狗日记小票', 'Ins名片', 'X修复版', 'icity日记', '背景图', '朋友圈', '朋友圈纯文字', '朋友圈夜间', '朋友圈纯文字夜间', '拍立得', '拍立得夜间'];
 
 function compactNewlines(t){return String(t||'').replace(/\r/g,'').replace(/\n{2,}/g,'\n').trim();}
 function migrateSettings(settings) {
