@@ -1,0 +1,5 @@
+{
+  "name": "__fallback_comments__",
+  "css": "",
+  "comments": "\n/* ===== 兜底评述模块（模板未提供 comments 时使用） ===== */\n.be-comments {\n  background: #ffffff;\n  border-top: 1px solid #ececec;\n  font-family: -apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", \"Segoe UI\", sans-serif;\n}\n.be-comment {\n  display: flex;\n  gap: 10px;\n  padding: 10px 16px;\n  border-bottom: 1px solid #f5f5f5;\n}\n.be-comment:last-child { border-bottom: none; }\n.be-comment-avatar {\n  width: 30px;\n  height: 30px;\n  border-radius: 50%;\n  background-size: cover;\n  background-position: center;\n  background-color: #eee;\n  flex-shrink: 0;\n}\n.be-comment-main { flex: 1; min-width: 0; }\n.be-comment-meta { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 6px; }\n.be-comment-name { font-size: 12.5px; color: #333; font-weight: 700; }\n.be-comment-id { font-size: 11px; color: #999; }\n.be-comment-time { font-size: 11px; color: #bbb; }\n.be-comment-text { font-size: 13px; color: #444; line-height: 1.6; margin-top: 2px; white-space: pre-wrap; overflow-wrap: break-word; }\n.be-comment[data-kind=\"user\"] .be-comment-name { color: #c13584; }\n"
+}
