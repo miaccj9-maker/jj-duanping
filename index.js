@@ -171,7 +171,7 @@ body { padding: 1px; }
   letter-spacing: 5px;
   text-indent: 5px;
   color: #000;
-  line-height: 33px;
+  line-height: 30px;
   white-space: nowrap;
   -webkit-text-stroke: 1px #000;
   text-shadow: 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
@@ -179,7 +179,7 @@ body { padding: 1px; }
 }
 .be-card.be-custom .be-watermark .be-wm-sub {
   position: absolute;
-  top: 35px;
+  top: 28px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 12px;
@@ -191,6 +191,7 @@ body { padding: 1px; }
   white-space: nowrap;
   font-family: "Nightgazer 16", "Fixedsys", "NSimSun", "SimSun", "Courier New", monospace;
 }
+.be-card.be-custom .be-watermark { height: 42px !important; }
 .be-card.be-custom .be-thought-main { display: block !important; }
 /* wrap 不设 max-width：宽度完全由 fitFrame 控制（否则与 iframe 宽度循环依赖，导致调宽无效） */
 .dp-card-wrap { width: max-content; }
