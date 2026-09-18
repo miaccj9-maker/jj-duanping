@@ -222,6 +222,16 @@
     resize: vertical;
     min-height: 44px;
 }
+/* 强制面板文本框紧凑行距、正常换行，不继承酒馆聊天窗口大行距（ID 提级 + !important 防主题覆盖） */
+#dp-modal .dp-field textarea,
+#dp-tpl-modal .dp-field textarea,
+#dp-import-modal .dp-field textarea,
+.dp-modal-panel .dp-field textarea {
+    line-height: 1.5 !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
 .dp-field textarea:focus,
 .dp-field input:focus,
 .dp-field select:focus {
