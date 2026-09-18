@@ -1511,13 +1511,15 @@ async function renderCard() {
         let srcH = 68;
         let nameSize = 16;
         let dateSize = 14;
-        const wRatio = cardW > 0 ? Math.min(1, cardW / 340) : 1;
-        if (wRatio < 1) {
-            titleSize = Math.max(9, Math.round(titleSize * wRatio));
-            srcH = Math.max(44, Math.round(68 * wRatio));
-            nameSize = Math.max(10, Math.round(nameSize * wRatio));
-            dateSize = Math.max(9, Math.round(dateSize * wRatio));
-        }
+        const wRatio = cardW > 0 ? (cardW / 340) : 1;
+        // 综合缩放：宽度变宽字号变大、变窄变小；高度(卡片总高)变低时同步缩小，取较紧一维避免溢出
+        const baseTotalH = 362; // 340宽 + 默认正文高280 + 固定结构82
+        const totalH = (cardH > 0 ? cardH : 280) + 82;
+        const ratio = Math.min(wRatio, totalH / baseTotalH);
+        titleSize = Math.max(9, Math.round(titleSize * ratio));
+        srcH = Math.max(44, Math.round(68 * ratio));
+        nameSize = Math.max(10, Math.round(nameSize * ratio));
+        dateSize = Math.max(9, Math.round(dateSize * ratio));
         polaroidTitleCss = '.be-card.be-custom{padding-bottom:' + srcH + 'px!important}.be-card.be-custom .be-source{height:' + srcH + 'px!important}.be-card.be-custom .be-source .title{font-size:' + titleSize + 'px!important;}.be-card.be-custom .be-name{font-size:' + nameSize + 'px!important;}.be-card.be-custom .be-date{font-size:' + dateSize + 'px!important;}';
     }
 
