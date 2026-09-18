@@ -1449,6 +1449,18 @@ async function renderCard() {
     const bgTxtCss = (isBgTpl && !collageCardHtml)
         ? `.be-card.be-custom .be-quote{color:${settings.textColor || '#ffffff'}!important;font-size:${Number(settings.bgQuoteSize) || 22}px!important;line-height:${Number(settings.bgQuoteLh) || 1.8}!important}`
         : '';
+    // 拍立得标题动态字号：文字越多字号越小
+    const isPolaroid = (settings.activeTemplateId === 'builtin:拍立得' || settings.activeTemplateId === 'builtin:拍立得夜间');
+    let polaroidTitleCss = '';
+    if (isPolaroid && settings.bookTitle) {
+        const len = settings.bookTitle.length;
+        let titleSize = 16;
+        if (len > 12) titleSize = 14;
+        if (len > 18) titleSize = 12;
+        if (len > 24) titleSize = 10;
+        polaroidTitleCss = '.be-card.be-custom .be-source .title{font-size:' + titleSize + 'px!important;}';
+    }
+
 
     const doc = `<!DOCTYPE html>
 <html>
