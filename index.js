@@ -2862,6 +2862,8 @@ function getSelectionContext(sel) {
     const el = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
     const mes = el && el.closest ? el.closest('.mes') : null;
     if (!mes) return null;
+    if (el.closest('.edit_textarea')) return null;
+    if (mes.querySelector('.edit_textarea')) return null;
     if (mes.closest('#dp-modal') || mes.closest('#dp-tpl-modal')) return null;
 
     const mesId = mes.dataset?.mesid ?? mes.getAttribute('mesid') ?? null;
@@ -4434,7 +4436,15 @@ function injectShell() {
     // （双时间点：60ms 覆盖多数浏览器，400ms 覆盖原生选择完成后才出选区句柄的慢速浏览器）
     document.addEventListener('touchend', () => setTimeout(onSelectionChange, 60));
     document.addEventListener('touchend', () => setTimeout(onSelectionChange, 400));
+    // 聊天气泡进入编辑界面（ST 编辑按钮 .mes_edit）时立即隐藏段评/存档浮标，手机端电脑端一致
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.mes_edit')) {
+            dp.selection = null;
+            hideFloatButton();
+        }
+    }, true);
     document.addEventListener('mouseup', (e) => {
+
         if (e.target.closest('#dp-float-btn') || e.target.closest('#dp-modal') || e.target.closest('#dp-tpl-modal') || e.target.closest('#dp-ctx-menu')) return;
         setTimeout(() => {
             const sel = window.getSelection();
