@@ -3667,6 +3667,12 @@ function injectShell() {
     document.getElementById('dp-tpl-select').addEventListener('change', async (e) => {
         const settings = getSettings();
         settings.activeTemplateId = e.target.value;
+        // 拍立得默认标题
+        if ((e.target.value === 'builtin:拍立得' || e.target.value === 'builtin:拍立得夜间') && !settings.bookTitle) {
+            settings.bookTitle = '祝好，祝当下祝每一个明天都好';
+            const titleInput = document.getElementById('dp-set-title');
+            if (titleInput) titleInput.value = settings.bookTitle;
+        }
         saveSettingsDebounced();
         await renderCard();
     });
