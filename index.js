@@ -1336,7 +1336,9 @@ async function loadFontCssText(st) {
     return '';
 }
 
+let dpRenderToken = 0;
 async function renderCard() {
+    const token = ++dpRenderToken;
     const frame = document.getElementById('dp-frame');
     if (!frame) return;
 
@@ -1561,6 +1563,7 @@ ${html}
 </body>
 </html>`;
     // srcdoc 内容未变则不重建 iframe（内置模板含大体积 base64，重建昂贵）
+    if (token !== dpRenderToken) return;
     if (frame._lastSrcdoc !== doc) {
         frame._lastSrcdoc = doc;
         frame.srcdoc = doc;
@@ -3456,6 +3459,41 @@ function injectShell() {
         openDuanpingPanel();
     });
     launcher.style.display = getSettings().showLauncher ? 'flex' : 'none';
+    // ===== 唤醒入口：加入 ST 输入框魔法棒（扩展菜单） =====
+    (function injectWandEntry() {
+        var addEntry = function() {
+            var menu = document.getElementById('extensionsMenu');
+            if (!menu) return false;
+            var wc = document.getElementById('dp_wand_container');
+            if (!wc) {
+                wc = document.createElement('div');
+                wc.id = 'dp_wand_container';
+                wc.className = 'extension_container';
+                menu.appendChild(wc);
+            }
+            if (wc.querySelector('[data-dp-wand]')) return true;
+            var btn = document.createElement('div');
+            btn.setAttribute('data-dp-wand', '1');
+            btn.className = 'fa-solid fa-pen-nib extensionsMenuExtensionButton';
+            btn.title = '晋江段评';
+            btn.style.cssText = 'cursor:pointer;padding:6px 10px;border-radius:8px;font-size:15px;text-align:center;';
+            btn.addEventListener('click', function(ev) {
+                ev.stopPropagation();
+                var m = document.getElementById('extensionsMenu');
+                if (m) m.style.display = 'none';
+                openDuanpingPanel();
+            });
+            wc.appendChild(btn);
+            return true;
+        };
+        if (!addEntry()) {
+            try {
+                var ob = new MutationObserver(function() { if (addEntry()) ob.disconnect(); });
+                ob.observe(document.body, { childList: true, subtree: true });
+                setTimeout(function() { try { ob.disconnect(); } catch (e) {} }, 15000);
+            } catch (e) {}
+        }
+    })();
     // ===== 画笔涂鸦（内嵌工具条，ios备忘录风格） =====
     const brushBtn = document.getElementById('dp-btn-brush');
     const brushBar = document.getElementById('dp-brush-bar');
